@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キープオンスクール - ロボットプログラミングをきっかけに学びを広げる"居場所"</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* カラー変数 */
+        :root {
+            --primary-blue: #5DADE2;
+            --secondary-orange: #F39C12;
+            --accent-yellow: #F1C40F;
+            --accent-green: #52C41A;
+            --accent-pink: #FF6B6B;
+            --dark-brown: #2C1810;
+            --light-bg: #F8F9FA;
+            --white: #FFFFFF;
+        }
+        
+        /* ヘッダー */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 150px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .cta-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(93, 173, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-header:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .cta-header:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .cta-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 173, 226, 0.4);
+        }
+        
+        /* ヒーローセクション */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content {
+            max-width: 700px;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            position: relative;
+        }
+        
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--dark-brown);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .cta-primary {
+            background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(243, 156, 18, 0.3);
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(243, 156, 18, 0.4);
+        }
+        
+        /* アニメーション要素 */
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            opacity: 0.1;
+        }
+        
+        .shape1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary-blue);
+            top: 10%;
+            right: -150px;
+            animation-delay: 0s;
+        }
+        
+        .shape2 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent-yellow);
+            bottom: 20%;
+            left: -100px;
+            animation-delay: 5s;
+        }
+        
+        .shape3 {
+            width: 150px;
+            height: 150px;
+            background: var(--accent-green);
+            top: 50%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-30px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(30px) rotate(240deg);
+            }
+        }
+        
+        /* 悩みセクション */
+        .problems {
+            padding: 80px 0;
+            background: white;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            color: var(--dark-brown);
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .problem-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .problem-item {
+            background: var(--light-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .problem-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .problem-item:before {
+            content: '✓';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: var(--accent-green);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .problem-item:hover:before {
+            opacity: 1;
+        }
+        
+        .problem-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .problem-text {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* コンセプトセクション */
+        .concept {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #FFF3E0 0%, #E8F5E9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .concept-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        .concept-text h3 {
+            font-size: 2rem;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+        }
+        
+        .concept-text p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            background: linear-gradient(to bottom, transparent 50%, rgba(93, 173, 226, 0.3) 50%);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .concept-image {
+            position: relative;
+            text-align: center;
+        }
+        
+        .concept-image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(93, 173, 226, 0.3);
+        }
+        
+        .concept-image-placeholder:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+        
+        /* 3つの柱セクション */
+        .pillars {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .pillar-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .pillar-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .pillar-header {
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pillar-header1 {
+            background: linear-gradient(135deg, var(--primary-blue), #3498DB);
+        }
+        
+        .pillar-header2 {
+            background: linear-gradient(135deg, var(--accent-yellow), var(--secondary-orange));
+        }
+        
+        .pillar-header3 {
+            background: linear-gradient(135deg, var(--accent-green), #27AE60);
+        }
+        
+        .pillar-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .pillar-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .pillar-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .pillar-content {
+            padding: 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .pillar-card.active .pillar-content {
+            max-height: 500px;
+        }
+        
+        .pillar-content h4 {
+            color: var(--dark-brown);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .pillar-content p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .pillar-point {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid;
+        }
+        
+        .pillar-card:nth-child(1) .pillar-point {
+            border-left-color: var(--primary-blue);
+        }
+        
+        .pillar-card:nth-child(2) .pillar-point {
+            border-left-color: var(--accent-yellow);
+        }
+        
+        .pillar-card:nth-child(3) .pillar-point {
+            border-left-color: var(--accent-green);
+        }
+        
+        .expand-icon {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .pillar-card.active .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* 差別化セクション */
+        .difference {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+            position: relative;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-top: 60px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-item.traditional {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-item.keepon {
+            box-shadow: 0 10px 40px rgba(93, 173, 226, 0.3);
+            transform: scale(1.05);
+            border: 3px solid var(--primary-blue);
+        }
+        
+        .comparison-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark-brown);
+        }
+        
+        .comparison-item.keepon h3 {
+            color: var(--primary-blue);
+        }
+        
+        .comparison-list {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .comparison-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .comparison-list li:before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #E74C3C;
+            font-weight: bold;
+        }
+        
+        .keepon .comparison-list li:before {
+            content: '✓';
+            color: var(--accent-green);
+        }
+        
+        .vs-circle {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--dark-brown);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ターゲットセクション */
+        .target {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .target-item {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            background: var(--light-bg);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .target-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .target-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .target-item:hover:before {
+            transform: scaleX(1);
+        }
+        
+        .target-emoji {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+            animation-delay: calc(var(--index) * 0.1s);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .target-text {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(93, 173, 226, 0.1), rgba(82, 196, 26, 0.1));
+            border-radius: 20px;
+            font-size: 1.2rem;
+            color: var(--dark-brown);
+        }
+        
+        /* CLAFTセクション */
+        .claft {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #2C3E50, #3498DB);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .claft:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 30c11 0 20 9 20 20s-9 20-20 20-20-9-20-20 9-20 20-20z' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'/%3E%3C/svg%3E") repeat;
+            animation: slide 20s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(50%);
+            }
+        }
+        
+        .claft-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .claft-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 30px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+        
+        .claft-title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+        
+        .claft-description {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+        
+        .claft-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .claft-feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .claft-feature:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .claft-feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .claft-feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        /* CTAセクション */
+        .final-cta {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #FFF3E0 0%, #E3F2FD 100%);
+            text-align: center;
+            position: relative;
+        }
+        
+        .final-cta-content h2 {
+            font-size: 2.5rem;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+        }
+        
+        .final-cta-content p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            padding: 20px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button.primary {
+            background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
+            color: white;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.3);
+        }
+        
+        .cta-button.secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* アクセス情報 */
+        .access-info {
+            margin-top: 60px;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .access-info h3 {
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .access-info p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .access-info .tel {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        /* フッター */
+        footer {
+            background: var(--dark-brown);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-logo {
+            width: 120px;
+            margin-bottom: 20px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        .copyright {
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+        
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .concept-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .comparison {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .vs-circle {
+                margin: 20px auto;
+            }
+            
+            .comparison-item.keepon {
+                transform: none;
+            }
+            
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cta-primary {
+                text-align: center;
+            }
+        }
+        
+        /* スクロールアニメーション */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* ローディングアニメーション */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .loader-tree {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ローディング画面 -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <svg class="loader-tree" viewBox="0 0 200 200">
+                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
+                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
+                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
+                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
+                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
+                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
+            </svg>
+            <p style="color: #666;">Loading...</p>
+        </div>
+    </div>
+
+    <!-- ヘッダー -->
+    <header id="header">
+        <div class="header-container">
+            <svg class="logo" viewBox="0 0 200 250">
+                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
+                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
+                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
+                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
+                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
+                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
+                <text x="100" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2C1810">Keepon</text>
+            </svg>
+            <a href="https://www.keeponlearning.fun/contact" class="cta-header">無料体験に申し込む</a>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="floating-shapes">
+            <div class="shape shape1"></div>
+            <div class="shape shape2"></div>
+            <div class="shape shape3"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content fade-in">
+                <h1 class="hero-title">
+                    <span>プログラミングだけじゃない！</span>
+                </h1>
+                <p class="hero-subtitle">
+                    キープオンスクールは<br>
+                    ロボットプログラミングをきっかけに<br>
+                    学びを広げる"居場所"です
+                </p>
+                <p class="hero-description">
+                    「学校の勉強、なんだかやる気が出ない…」<br>
+                    「周りの子と比べてしまって不安…」<br>
+                    そんな悩みを抱えるお子さんや保護者の方へ。<br>
+                    キープオンスクールは、ただの習い事ではありません。<br>
+                    子どもたちが自分で考え、行動する力を育みながら、<br>
+                    安心して自分らしくいられる「居場所」です。
+                </p>
+                <div class="cta-group">
+                    <a href="https://www.keeponlearning.fun/contact" class="cta-primary">
+                        🎯 無料体験に今すぐ申し込む
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 悩みセクション -->
+    <section class="problems">
+        <div class="container">
+            <h2 class="section-title fade-in">こんなお悩みありませんか？</h2>
+            <div class="problem-list fade-in">
+                <div class="problem-item">
+                    <div class="problem-icon">😔</div>
+                    <p class="problem-text">学校の勉強に興味が持てない、やる気が出ない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">😰</div>
+                    <p class="problem-text">周りの子と比べて焦ってしまう、自信が持てない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">🤔</div>
+                    <p class="problem-text">何か習い事をさせたいけど、子どもに合うものが見つからない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">😟</div>
+                    <p class="problem-text">学校に行きづらい、集団が苦手で居場所がない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">💭</div>
+                    <p class="problem-text">好きなことは見つけてほしいけど、押し付けたくない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">🎯</div>
+                    <p class="problem-text">将来に役立つ力を身につけさせたいけど、何から始めれば...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- コンセプトセクション -->
+    <section class="concept">
+        <div class="container">
+            <h2 class="section-title fade-in">キープオンスクールって、<br>ロボット教室...だけじゃないの？</h2>
+            <div class="concept-content fade-in">
+                <div class="concept-text">
+                    <h3>「キープオンスクールって、ロボット教室なんでしょ？」</h3>
+                    <p>よくそう聞かれますが、実はそれだけではないんです！</p>
+                    <p>もちろん、大人気のロボットプログラミングも学べます。</p>
+                    <p>でも、私たちが一番大切にしているのは、子どもたちが<span class="highlight">「自分で考えて、いろんな人と話し合い、自分から行動する力」</span>を育むこと。</p>
+                    <p>キープオンスクールは、習い事というよりも、子どもたちにとって<span class="highlight">安心できる「居場所」</span>でありたいと考えています。</p>
+                </div>
+                <div class="concept-image">
+                    <div class="concept-image-placeholder">
+                        子どもたちの活動写真
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3つの柱セクション -->
+    <section class="pillars">
+        <div class="container">
+            <h2 class="section-title fade-in">キープオンスクールで体験できる<br>「３つの学びの柱」</h2>
+            <div class="pillars-grid fade-in">
+                <!-- ロボットプログラミング -->
+                <div class="pillar-card" onclick="togglePillar(this)">
+                    <div class="pillar-header pillar-header1">
+                        <div class="pillar-number">1</div>
+                        <div class="pillar-icon">🤖</div>
+                        <h3 class="pillar-title">ロボットプログラミング</h3>
+                        <p class="pillar-subtitle">「できた！」が自信になる！<br>問題を見つけて解決する力を育てよう</p>
+                        <div class="expand-icon">⌄</div>
+                    </div>
+                    <div class="pillar-content">
+                        <h4>どんなことをするの？</h4>
+                        <p>ブロックでロボットを組み立てて、パソコンでプログラミング！自分の作ったロボットが目の前で動くから、プログラミングの仕組みが「見て」「感じて」よくわかります。</p>
+                        <p>「どうしたらもっとうまく動くかな？」と自分で考えるうちに、問題を見つける力や、それを解決する力が自然と身につきます。</p>
+                        <div class="pillar-point">
+                            <strong>ここがポイント！</strong><br>
+                            テキスト通りに作るだけじゃなく、オリジナルのロボットを作って発表する「ロボット発表会」も！自分のアイデアを形にする楽しさを体験できます。「難しいかな？」と心配な子も大丈夫！スタッフが一人ひとりに合わせて、自分で「できた！」と気づけるようにサポートします。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yononaka -->
+                <div class="pillar-card" onclick="togglePillar(this)">
+                    <div class="pillar-header pillar-header2">
+                        <div class="pillar-number">2</div>
+                        <div class="pillar-icon">💬</div>
+                        <h3 class="pillar-title">Yononaka</h3>
+                        <p class="pillar-subtitle">正解は一つじゃない！<br>いろんな意見に触れて、自分の世界を広げよう</p>
+                        <div class="expand-icon">⌄</div>
+                    </div>
+                    <div class="pillar-content">
+                        <h4>どんなことをするの？</h4>
+                        <p>「お金って何だろう？」「生きるってどういうこと？」…学校ではあまり話さないような、でもとっても大切なテーマについて、いろんな年齢や学校の仲間たちとオンラインで話し合います。</p>
+                        <div class="pillar-point">
+                            <strong>ここがポイント！</strong><br>
+                            ここには「覚えなきゃいけない正解」はありません。だから「間違ったらどうしよう…」なんて心配はいりません！いろんな人の考えを聞いて、「そんな考え方もあるんだ！」と新しい発見をしたり、自分の意見を伝える練習をしたりすることで、コミュニケーション力や、自分自身のこと、そして他の人のことをもっと深く理解できるようになります。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PBL -->
+                <div class="pillar-card" onclick="togglePillar(this)">
+                    <div class="pillar-header pillar-header3">
+                        <div class="pillar-number">3</div>
+                        <div class="pillar-icon">🔍</div>
+                        <h3 class="pillar-title">PBL（課題解決型学習）</h3>
+                        <p class="pillar-subtitle">「なんでだろう？」から始まる！<br>自分で学びをデザインする力を育てよう</p>
+                        <div class="expand-icon">⌄</div>
+                    </div>
+                    <div class="pillar-content">
+                        <h4>どんなことをするの？</h4>
+                        <p>※PBLとは…Problem Based Learning の略で、「自分で課題を見つけて解決する学習」のことです。</p>
+                        <p>「鳥ってなんで飛ぶんだろう？」「私の好きなゲームはどうやって作られてるの？」…そんな身近な「なぜ？」を自分で見つけて、本やインターネットで調べて、分かったことをみんなの前で発表します。</p>
+                        <div class="pillar-point">
+                            <strong>ここがポイント！</strong><br>
+                            学校の宿題のように「これをやりなさい」と決められるのではなく、自分の「知りたい！」という気持ちが学びのスタート！自分でテーマを決めて、調べて、まとめて、発表することで、計画力や表現力、そして何よりも「自分で学ぶ楽しさ」を実感できます。これは、将来どんな道に進むにも役立つ「生きる力」そのものです。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 差別化セクション -->
+    <section class="difference">
+        <div class="container">
+            <h2 class="section-title fade-in">「他の習い事と、どこが違うの？」<br>キープオンスクールが大切にしていること</h2>
+            <div class="comparison fade-in">
+                <div class="comparison-item traditional">
+                    <h3>一般的な塾・習い事</h3>
+                    <ul class="comparison-list">
+                        <li>決められた問題を解く</li>
+                        <li>正解を覚える</li>
+                        <li>テストの点数で評価</li>
+                        <li>みんな同じペース</li>
+                        <li>やらされる勉強</li>
+                    </ul>
+                </div>
+                <div class="vs-circle">VS</div>
+                <div class="comparison-item keepon">
+                    <h3>キープオンスクール</h3>
+                    <ul class="comparison-list">
+                        <li>自分で課題を見つける</li>
+                        <li>考え方を身につける</li>
+                        <li>成長過程を大切に</li>
+                        <li>一人ひとりのペース</li>
+                        <li>夢中になれる学び</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container" style="margin-top: 60px;">
+                <p style="text-align: center; font-size: 1.1rem; color: #666; line-height: 1.8;">
+                    多くの塾や習い事では、あらかじめ決められた問題に「正しい答え」を出すことが求められますよね。<br>
+                    もちろん、それも大切な学びの一つです。<br><br>
+                    でも、キープオンスクールは少し違います。<br>
+                    私たちは、子どもたちが<strong>「これをやってみたい！」「これが気になる！」という<br>
+                    自分の気持ちから始まる学び</strong>を応援したいと思っています。<br><br>
+                    「やらされる勉強」ではなく、夢中になって「これ面白い！もっと知りたい！」と<br>
+                    自分でどんどん探求していく。<br>
+                    そんな<strong>「学びの楽しさ」</strong>に気づいてほしい。<br>
+                    それが、キープオンスクールの願いです。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ターゲットセクション -->
+    <section class="target">
+        <div class="container">
+            <h2 class="section-title fade-in">「うちの子には、どんなところがあってるかな？」<br>キープオンスクールは、こんなお子さんを待っています！</h2>
+            <div class="target-grid fade-in">
+                <div class="target-item" style="--index: 0">
+                    <div class="target-emoji">🤖</div>
+                    <p class="target-text">ロボットやプログラミングが大好き！もっと本格的にやってみたい子</p>
+                </div>
+                <div class="target-item" style="--index: 1">
+                    <div class="target-emoji">❓</div>
+                    <p class="target-text">「なんで？」「どうして？」がいっぱいで、いろんなことを知りたがり屋さんな子</p>
+                </div>
+                <div class="target-item" style="--index: 2">
+                    <div class="target-emoji">💡</div>
+                    <p class="target-text">自分の考えやアイデアを形にして、誰かに伝えてみたい子</p>
+                </div>
+                <div class="target-item" style="--index: 3">
+                    <div class="target-emoji">🚀</div>
+                    <p class="target-text">学校の勉強とは違う、新しいことにチャレンジしてみたい子</p>
+                </div>
+                <div class="target-item" style="--index: 4">
+                    <div class="target-emoji">🏠</div>
+                    <p class="target-text">学校に行くのが少し苦手だったり、大勢の人がいる場所がちょっと得意じゃない子</p>
+                </div>
+                <div class="target-item" style="--index: 5">
+                    <div class="target-emoji">🌟</div>
+                    <p class="target-text">「自分のペースで学びたい」「好きなことを見つけたい」と思っている子</p>
+                </div>
+            </div>
+            <div class="welcome-message fade-in">
+                <p>キープオンスクールは、どんなお子さんでも大歓迎です！<br>
+                実際に、不登校を経験しているお子さんもたくさん通ってくれています。<br>
+                難しい勉強を無理やりさせるのではなく、<br>
+                一人ひとりの「好き」や「やってみたい」という気持ちを大切に、<br>
+                安心して過ごせる「居場所」でありたいと思っています。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLAFTセクション -->
+    <section class="claft">
+        <div class="container">
+            <div class="claft-content fade-in">
+                <div class="claft-badge">2025年スタート！</div>
+                <h2 class="claft-title">CLAFT</h2>
+                <p class="claft-description">
+                    もっと多くの子どもたちに「学ぶ楽しさ」を届けたいという想いから、<br>
+                    2025年に新しいオンラインスクール／フリースクール「CLAFT」をスタートする予定です！
+                </p>
+                <div class="claft-features">
+                    <div class="claft-feature">
+                        <div class="claft-feature-icon">🌍</div>
+                        <h3 class="claft-feature-title">全国どこからでも</h3>
+                        <p>オンラインだから場所を選ばず参加できます</p>
+                    </div>
+                    <div class="claft-feature">
+                        <div class="claft-feature-icon">💖</div>
+                        <h3 class="claft-feature-title">非認知能力を育む</h3>
+                        <p>優しさ、好奇心、やり抜く力など生きる力を重視</p>
+                    </div>
+                    <div class="claft-feature">
+                        <div class="claft-feature-icon">🎯</div>
+                        <h3 class="claft-feature-title">テストで評価しない</h3>
+                        <p>一人ひとりの成長を大切にする新しい学び</p>
+                    </div>
+                </div>
+                <p style="margin-top: 40px; opacity: 0.9;">
+                    詳細は決まり次第お知らせしますので、お楽しみに！
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 最終CTAセクション -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="final-cta-content fade-in">
+                <h2>まずは一歩、踏み出してみませんか？</h2>
+                <p>
+                    キープオンスクールは、ロボットプログラミングを学ぶだけの場所ではありません。<br>
+                    子どもたちが自分らしく輝き、未来を切り拓くための「土台」と「きっかけ」を作る場所です。
+                </p>
+                <p>
+                    「うちの子にも合うかな？」「どんな雰囲気なんだろう？」<br>
+                    少しでも興味を持っていただけたら、ぜひ一度、無料体験にお越しください。<br>
+                    スタッフ一同、皆さんとお会いできるのを楽しみにしています！
+                </p>
+                <div class="cta-buttons">
+                    <a href="https://www.keeponlearning.fun/contact" class="cta-button primary">
+                        🎯 無料体験・お問い合わせはこちら
+                    </a>
+                    <a href="https://www.keeponlearning.fun/" class="cta-button secondary">
+                        📚 詳しい情報を見る
+                    </a>
+                </div>
+                <div class="access-info">
+                    <h3>エジソンアカデミー本校</h3>
+                    <p>〒581-0066</p>
+                    <p>大阪府八尾市北亀井町3丁目2-21 アーテック5階</p>
+                    <p class="tel">TEL: 090-8652-4333</p>
+                    <p style="margin-top: 20px;">
+                        <small>開校9年、約400名の生徒さんと共に歩んできました</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <div class="footer-content">
+            <svg class="footer-logo" viewBox="0 0 200 250">
+                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
+                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
+                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
+                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
+                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
+                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
+                <text x="100" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2C1810">Keepon</text>
+            </svg>
+            <div class="footer-links">
+                <a href="https://www.keeponlearning.fun/">ホームページ</a>
+                <a href="https://www.keeponlearning.fun/contact">お問い合わせ</a>
+                <a href="https://www.keeponlearning.fun/">詳細情報</a>
+            </div>
+            <p class="copyright">© 2025 キープオンスクール All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ローディング画面の非表示
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // スクロールアニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ヘッダーのスクロール効果
+        let lastScroll = 0;
+        window.addEventListener('scroll', function() {
+            const currentScroll = window.pageYOffset;
+            const header = document.getElementById('header');
+            
+            if (currentScroll > 100) {
+                header.style.padding = '10px 0';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.padding = '15px 0';
+                header.style.boxShadow = 'none';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // 3つの柱のトグル機能
+        function togglePillar(card) {
+            // 他のカードを閉じる
+            document.querySelectorAll('.pillar-card').forEach(c => {
+                if (c !== card) {
+                    c.classList.remove('active');
+                }
+            });
+            
+            // クリックされたカードをトグル
+            card.classList.toggle('active');
+        }
+
+        // パララックス効果
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape');
+            
+            shapes.forEach((shape, index) => {
+                const speed = 0.5 + (index * 0.1);
+                shape.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // スムーズスクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // マウスフォロワー効果（デスクトップのみ）
+        if (window.innerWidth > 768) {
+            const heroSection = document.querySelector('.hero');
+            let mouseX = 0;
+            let mouseY = 0;
+            let currentX = 0;
+            let currentY = 0;
+
+            heroSection.addEventListener('mousemove', function(e) {
+                const rect = heroSection.getBoundingClientRect();
+                mouseX = (e.clientX - rect.left - rect.width / 2) / 50;
+                mouseY = (e.clientY - rect.top - rect.height / 2) / 50;
+            });
+
+            function animate() {
+                currentX += (mouseX - currentX) * 0.1;
+                currentY += (mouseY - currentY) * 0.1;
+                
+                document.querySelectorAll('.shape').forEach((shape, index) => {
+                    const speed = 1 + (index * 0.5);
+                    shape.style.transform = `translate(${currentX * speed}px, ${currentY * speed}px)`;
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // カウントアップアニメーション
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        // 実績カウンターのアニメーション
+        const accessInfo = document.querySelector('.access-info');
+        const counterObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    // ここで実績の数字をアニメーション化できます
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (accessInfo) {
+            counterObserver.observe(accessInfo);
+        }
+
+        // ボタンのリップルエフェクト
+        document.querySelectorAll('.cta-button, .cta-primary, .cta-header').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // タイピングエフェクト（オプション）
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // ページ読み込み時のアニメーション
+        document.addEventListener('DOMContentLoaded', function() {
+            // 最初のビューポートにある要素を表示
+            document.querySelectorAll('.fade-in').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                    }, 100);
+                }
+            });
+        });
+
+        // モバイルメニュー用（将来的な拡張のため）
+        function toggleMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('active');
+            }
+        }
+
+        // パフォーマンス最適化のためのデバウンス関数
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // スクロールイベントの最適化
+        const optimizedScroll = debounce(function() {
+            // スクロール関連の処理
+        }, 10);
+
+        window.addEventListener('scroll', optimizedScroll);
+
+        // 画像の遅延読み込み（将来的な実装のため）
+        if ('IntersectionObserver' in window) {
+            const lazyImages = document.querySelectorAll('img[data-lazy]');
+            const imageObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.lazy;
+                        img.removeAttribute('data-lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            lazyImages.forEach(img => imageObserver.observe(img));
+        }
+
+        // フォーム送信時の処理（将来的な実装のため）
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            // フォーム送信処理
+            console.log('Form submitted');
+        }
+
+        // アクセシビリティ: キーボードナビゲーション
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-nav');
+        });
+
+        // コンソールメッセージ
+        console.log('%cキープオンスクール', 'color: #5DADE2; font-size: 24px; font-weight: bold;');
+        console.log('%c子どもたちの「できた！」を応援します', 'color: #52C41A; font-size: 16px;');
+        console.log('お問い合わせ: https://www.keeponlearning.fun/contact');
+    </script>
+
+    <!-- リップルエフェクト用のスタイル -->
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .keyboard-nav *:focus {
+            outline: 3px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* プリント用スタイル */
+        @media print {
+            header,
+            .floating-shapes,
+            .loader {
+                display: none;
+            }
+
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+                color: black;
+            }
+
+            .section-title {
+                page-break-after: avoid;
+            }
+
+            section {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* アクセシビリティ: アニメーションの無効化 */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .fade-in {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* ダークモード対応（オプション） */
+        @media (prefers-color-scheme: dark) {
+            /* ダークモード用のスタイルをここに追加できます */
+        }
+    </style>
+</body>
+</html>
