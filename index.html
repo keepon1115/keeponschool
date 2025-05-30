@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>キープオンスクール - ロボットプログラミングをきっかけに学びを広げる"居場所"</title>
+    <!-- Google Fonts: Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,10 +18,11 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
-            line-height: 1.6;
+            font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; /* Noto Sans JP を優先 */
+            line-height: 1.7; /* 微調整 */
             color: #333;
             overflow-x: hidden;
+            scroll-behavior: smooth; /* スムーズスクロールを有効化 */
         }
         
         /* カラー変数 */
@@ -25,9 +32,55 @@
             --accent-yellow: #F1C40F;
             --accent-green: #52C41A;
             --accent-pink: #FF6B6B;
-            --dark-brown: #2C1810;
+            --dark-brown: #3A2E2A; /* 少し調整 */
             --light-bg: #F8F9FA;
             --white: #FFFFFF;
+            --header-height: 80px; /* ヘッダーの高さを定義 */
+        }
+        
+        /* ローディングアニメーション */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease; /* visibilityも追加 */
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden; /* opacityだけでなくvisibilityも変更 */
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        /* CSSローダーに変更 (SVGの代わりに) */
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(0,0,0,0.1);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loader-text {
+            font-size: 1.2rem;
+            color: var(--dark-brown);
+            font-weight: 500;
         }
         
         /* ヘッダー */
@@ -35,12 +88,18 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.9); /* 少し透明度調整 */
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* 初期は控えめに */
             z-index: 1000;
+            padding: 20px 0; /* 初期パディング */
+            transition: top 0.3s ease-in-out, padding 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        /* スクロール時のヘッダースタイル */
+        header.scrolled {
             padding: 15px 0;
-            transition: top 0.3s ease-in-out, padding 0.3s ease, box-shadow 0.3s ease; /* 修正: transitionプロパティ */
+            background: rgba(255, 255, 255, 0.98); /* 不透明度を上げる */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* 影を濃く */
         }
         
         .header-container {
@@ -52,27 +111,38 @@
             align-items: center;
         }
         
+        .logo-link { /* ロゴをリンクに */
+            text-decoration: none;
+        }
         .logo {
-            width: 150px; /* ロゴの幅を少し調整 */
-            height: auto; /* 高さは自動 */
+            /* SVGの代わりにテキストロゴ */
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark-brown);
+            /* width: 150px; */ /* 不要に */
+            /* height: auto; */ /* 不要に */
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .logo span {
+            color: var(--primary-blue);
         }
         
         .logo:hover {
             transform: scale(1.05);
+            color: var(--primary-blue);
         }
         
         .cta-header {
             background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
             color: white;
-            padding: 12px 30px;
+            padding: 10px 25px; /* 少し調整 */
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px; /* 少し調整 */
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(93, 173, 226, 0.3);
+            box-shadow: 0 4px 15px rgba(93, 173, 226, 0.2); /* 影調整 */
             position: relative;
             overflow: hidden;
         }
@@ -85,37 +155,38 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            background: rgba(255, 255, 255, 0.2); /* 透明度調整 */
+            transform: translate(-50%, -50%) scale(0); /* scaleでアニメーション */
+            transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1), height 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
         .cta-header:hover:before {
-            width: 300px;
-            height: 300px;
+            width: 250px; /* 調整 */
+            height: 250px; /* 調整 */
+            transform: translate(-50%, -50%) scale(1);
         }
         
         .cta-header:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(93, 173, 226, 0.4);
+            box-shadow: 0 6px 20px rgba(93, 173, 226, 0.3); /* 影調整 */
         }
         
         /* ヒーローセクション */
         .hero {
             min-height: 100vh;
-            background: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 100%);
+            background: linear-gradient(135deg, #EBF5FB 0%, #FEF9E7 100%); /* 背景色微調整 */
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
-            padding-top: 100px; /* ヘッダーの高さ分を考慮 */
+            padding-top: var(--header-height); /* ヘッダーの高さ分パディング */
         }
         
         .hero-container {
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 40px 20px; /* パディング追加 */
             position: relative;
             z-index: 2;
         }
@@ -125,11 +196,11 @@
         }
         
         .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(2.8rem, 6vw, 4.2rem); /* サイズ微調整 */
             font-weight: 900;
             color: var(--dark-brown);
-            margin-bottom: 20px;
-            line-height: 1.2;
+            margin-bottom: 25px; /* 微調整 */
+            line-height: 1.25; /* 微調整 */
             position: relative;
         }
         
@@ -138,19 +209,21 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            padding-bottom: 5px; /* 下線とのスペース */
         }
         
         .hero-subtitle {
-            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-size: clamp(1.3rem, 3vw, 1.9rem); /* サイズ微調整 */
             color: var(--dark-brown);
-            margin-bottom: 30px;
+            opacity: 0.9; /* 微調整 */
+            margin-bottom: 35px; /* 微調整 */
             font-weight: 500;
         }
         
         .hero-description {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 40px;
+            font-size: 1.15rem; /* 微調整 */
+            color: #555; /* 微調整 */
+            margin-bottom: 45px; /* 微調整 */
             line-height: 1.8;
         }
         
@@ -163,21 +236,24 @@
         .cta-primary {
             background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
             color: white;
-            padding: 18px 40px;
+            padding: 16px 35px; /* パディング調整 */
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* サイズ調整 */
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(243, 156, 18, 0.3);
+            box-shadow: 0 4px 20px rgba(243, 156, 18, 0.25); /* 影調整 */
             display: inline-block;
             position: relative;
             overflow: hidden;
         }
+        .cta-primary .icon { /* アイコン用のスペース */
+            margin-left: 8px;
+        }
         
         .cta-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(243, 156, 18, 0.4);
+            transform: translateY(-3px) scale(1.02); /* スケール追加 */
+            box-shadow: 0 8px 30px rgba(243, 156, 18, 0.35); /* 影調整 */
         }
         
         /* アニメーション要素 */
@@ -188,61 +264,53 @@
             top: 0;
             left: 0;
             pointer-events: none;
+            z-index: 1; /* hero-contentより下 */
         }
         
         .shape {
             position: absolute;
-            border-radius: 50%;
-            animation: float 20s infinite ease-in-out;
-            opacity: 0.1;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* blob形状 */
+            animation: float 25s infinite ease-in-out, morph 10s infinite ease-in-out alternate; /* morph追加 */
+            opacity: 0.08; /* 透明度調整 */
         }
         
         .shape1 {
-            width: 300px;
-            height: 300px;
+            width: 350px; height: 350px; /* サイズ調整 */
             background: var(--primary-blue);
-            top: 10%;
-            right: -150px;
-            animation-delay: 0s;
+            top: 5%; right: -180px; /* 位置調整 */
+            animation-delay: 0s, 0s;
         }
         
         .shape2 {
-            width: 200px;
-            height: 200px;
+            width: 250px; height: 250px; /* サイズ調整 */
             background: var(--accent-yellow);
-            bottom: 20%;
-            left: -100px;
-            animation-delay: 5s;
+            bottom: 15%; left: -120px; /* 位置調整 */
+            animation-delay: 4s, 1s;
         }
         
         .shape3 {
-            width: 150px;
-            height: 150px;
+            width: 180px; height: 180px; /* サイズ調整 */
             background: var(--accent-green);
-            top: 50%;
-            right: 10%;
-            animation-delay: 10s;
+            top: 45%; right: 8%; /* 位置調整 */
+            animation-delay: 8s, 2s;
         }
         
         @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            33% {
-                transform: translateY(-30px) rotate(120deg);
-            }
-            66% {
-                transform: translateY(30px) rotate(240deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            33% { transform: translateY(-35px) rotate(60deg) scale(1.05); }
+            66% { transform: translateY(20px) rotate(-40deg) scale(0.95); }
+        }
+        @keyframes morph { /* blob形状変化 */
+            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 60% 40% 30% 70% / 70% 50% 50% 30%; }
         }
         
-        /* 悩みセクション */
-        .problems {
-            padding: 80px 0;
-            background: white;
+        /* セクション共通 */
+        section {
+            padding: 100px 0; /* 上下パディング統一 */
             position: relative;
+            overflow: hidden; /* 内部要素のはみ出し防止 */
         }
-        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -250,106 +318,121 @@
         }
         
         .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
+            font-size: clamp(2.2rem, 5vw, 3.2rem); /* サイズ調整 */
             text-align: center;
             color: var(--dark-brown);
-            margin-bottom: 50px;
+            margin-bottom: 60px; /* マージン調整 */
             position: relative;
+            font-weight: 700; /* 太さ調整 */
         }
         
         .section-title:after {
             content: '';
-            width: 100px;
-            height: 4px;
+            width: 80px; /* 長さ調整 */
+            height: 5px; /* 太さ調整 */
             background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
             position: absolute;
-            bottom: -15px;
+            bottom: -20px; /* 位置調整 */
             left: 50%;
             transform: translateX(-50%);
-            border-radius: 2px;
+            border-radius: 3px; /* 角丸調整 */
         }
         
+        /* 悩みセクション */
+        .problems {
+            background: white;
+        }
+                
         .problem-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* minmax調整 */
+            gap: 35px; /* gap調整 */
+            /* margin-top: 50px; */ /* section-titleのマージンでカバー */
         }
         
         .problem-item {
             background: var(--light-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
+            padding: 35px; /* パディング調整 */
+            border-radius: 15px; /* 角丸調整 */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); /* 影調整 */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* イージング変更 */
             position: relative;
             overflow: hidden;
         }
         
         .problem-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px) scale(1.02); /* スケール追加 */
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* 影調整 */
         }
         
-        .problem-item:before {
-            content: '✓';
+        .problem-item:before { /* チェックマークではなく、デザイン的なアクセントに */
+            content: '';
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            color: var(--accent-green);
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: var(--accent-green);
+            border-radius: 50%;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transform: scale(0.5);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
         
         .problem-item:hover:before {
-            opacity: 1;
+            opacity: 0.1;
+            transform: scale(1);
         }
         
         .problem-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.5rem; /* サイズ調整 */
+            margin-bottom: 20px; /* マージン調整 */
+            color: var(--primary-blue); /* 色付け */
+            display: inline-block; /* アニメーションのため */
+            transition: transform 0.3s ease;
+        }
+        .problem-item:hover .problem-icon {
+            transform: rotateY(180deg); /* ホバー時アイコン回転 */
         }
         
         .problem-text {
-            font-size: 1.1rem;
-            color: #666;
-            line-height: 1.6;
+            font-size: 1.05rem; /* サイズ調整 */
+            color: #555; /* 色調整 */
+            line-height: 1.7; /* 行間調整 */
         }
         
         /* コンセプトセクション */
         .concept {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #FFF3E0 0%, #E8F5E9 100%);
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, #FEF9E7 0%, #EAF2F8 100%); /* 背景調整 */
         }
         
         .concept-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            grid-template-columns: 1fr 1.1fr; /* 比率調整 */
+            gap: 50px; /* gap調整 */
             align-items: center;
-            margin-top: 50px;
+            /* margin-top: 50px; */
         }
         
         .concept-text h3 {
-            font-size: 2rem;
+            font-size: 2.2rem; /* サイズ調整 */
             color: var(--dark-brown);
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* マージン調整 */
+            font-weight: 700;
         }
         
         .concept-text p {
-            font-size: 1.1rem;
-            color: #666;
+            font-size: 1.1rem; /* サイズ調整 */
+            color: #555;
             line-height: 1.8;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .highlight {
-            background: linear-gradient(to bottom, transparent 50%, rgba(93, 173, 226, 0.3) 50%);
-            padding: 2px 8px;
+            background: linear-gradient(to top, rgba(93, 173, 226, 0.25) 50%, transparent 50%); /* グラデーション方向変更 */
+            padding: 0px 5px; /* パディング調整 */
             border-radius: 4px;
+            font-weight: 500; /* 少し太く */
         }
         
         .concept-image {
@@ -357,10 +440,11 @@
             text-align: center;
         }
         
-        .concept-image-placeholder {
+        .concept-image-placeholder { /* 実際の画像がないのでデザインでカバー */
             width: 100%;
-            height: 400px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            aspect-ratio: 4 / 3; /* 比率指定 */
+            /* height: 400px; */
+            background: url('https://images.unsplash.com/photo-1517077304055-6e89abbf0920?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y2hpbGRyZW4lMjBsZWFybmluZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60') center/cover no-repeat;
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -369,95 +453,83 @@
             font-size: 1.5rem;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(93, 173, 226, 0.3);
+            box-shadow: 0 15px 50px rgba(93, 173, 226, 0.25); /* 影調整 */
         }
         
-        .concept-image-placeholder:before {
+        .concept-image-placeholder:before { /* シャインエフェクトは維持 */
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* 透明度調整 */
             transform: rotate(45deg);
-            animation: shine 3s infinite;
+            animation: shine 3.5s infinite linear; /* イージング変更 */
         }
         
-        @keyframes shine {
-            0% {
-                transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-            100% {
-                transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
+        @keyframes shine { /* アニメーション調整 */
+            0% { transform: translateX(-150%) translateY(-150%) rotate(45deg); }
+            100% { transform: translateX(150%) translateY(150%) rotate(45deg); }
         }
         
         /* 3つの柱セクション */
         .pillars {
-            padding: 80px 0;
             background: white;
         }
         
         .pillars-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* minmax調整 */
+            gap: 35px; /* gap調整 */
+            /* margin-top: 60px; */
         }
         
         .pillar-card {
             background: white;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.08); /* 影調整 */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             position: relative;
         }
         
         .pillar-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12); /* 影調整 */
         }
         
         .pillar-header {
-            padding: 40px 30px;
+            padding: 35px 30px; /* パディング調整 */
             position: relative;
             overflow: hidden;
         }
         
-        .pillar-header1 {
-            background: linear-gradient(135deg, var(--primary-blue), #3498DB);
-        }
-        
-        .pillar-header2 {
-            background: linear-gradient(135deg, var(--accent-yellow), var(--secondary-orange));
-        }
-        
-        .pillar-header3 {
-            background: linear-gradient(135deg, var(--accent-green), #27AE60);
-        }
+        .pillar-header1 { background: linear-gradient(135deg, var(--primary-blue), #3498DB); }
+        .pillar-header2 { background: linear-gradient(135deg, var(--accent-yellow), var(--secondary-orange)); }
+        .pillar-header3 { background: linear-gradient(135deg, var(--accent-green), #27AE60); }
         
         .pillar-number {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 4rem;
+            top: 15px; right: 25px; /* 位置調整 */
+            font-size: 3.5rem; /* サイズ調整 */
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.15); /* 透明度調整 */
+            line-height: 1; /* 行間調整 */
         }
         
         .pillar-icon {
-            font-size: 3rem;
+            font-size: 2.8rem; /* サイズ調整 */
             margin-bottom: 15px;
+            color: white; /* アイコンも白に */
         }
         
         .pillar-title {
             color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 1.6rem; /* サイズ調整 */
+            font-weight: 700; /* 太さ調整 */
+            margin-bottom: 8px; /* マージン調整 */
             position: relative;
             z-index: 1;
         }
@@ -470,80 +542,319 @@
         }
         
         .pillar-content {
-            padding: 30px;
+            padding: 0 30px; /* 初期パディング調整 */
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease;
+            transition: max-height 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), padding 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* paddingもアニメーション */
         }
         
         .pillar-card.active .pillar-content {
-            max-height: 1000px; /* 修正: 文字が隠れないように値を増やす */
+            max-height: 500px; /* 十分な高さを確保 */
+            padding: 30px 30px; /* 開いた時のパディング */
         }
         
         .pillar-content h4 {
             color: var(--dark-brown);
             margin-bottom: 15px;
-            font-size: 1.2rem;
+            font-size: 1.25rem; /* サイズ調整 */
+            font-weight: 700;
         }
         
         .pillar-content p {
-            color: #666;
+            color: #555;
             line-height: 1.8;
             margin-bottom: 15px;
+            font-size: 0.95rem; /* サイズ調整 */
         }
         
         .pillar-point {
             background: var(--light-bg);
-            padding: 15px;
+            padding: 15px 20px; /* パディング調整 */
             border-radius: 10px;
             margin-top: 20px;
-            border-left: 4px solid;
+            border-left: 5px solid; /* 太さ調整 */
         }
         
-        .pillar-card:nth-child(1) .pillar-point {
-            border-left-color: var(--primary-blue);
-        }
-        
-        .pillar-card:nth-child(2) .pillar-point {
-            border-left-color: var(--accent-yellow);
-        }
-        
-        .pillar-card:nth-child(3) .pillar-point {
-            border-left-color: var(--accent-green);
-        }
+        .pillar-card:nth-child(1) .pillar-point { border-left-color: var(--primary-blue); }
+        .pillar-card:nth-child(2) .pillar-point { border-left-color: var(--accent-yellow); }
+        .pillar-card:nth-child(3) .pillar-point { border-left-color: var(--accent-green); }
         
         .expand-icon {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
+            bottom: 15px; /* 位置調整 */
+            right: 20px; /* 位置調整 */
+            width: 36px; /* サイズ調整 */
+            height: 36px; /* サイズ調整 */
+            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
+            font-size: 1.3rem; /* アイコンサイズ調整 */
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* イージング変更 */
         }
         
         .pillar-card.active .expand-icon {
-            transform: rotate(180deg);
+            transform: rotate(135deg); /* 回転角度変更 */
         }
         
+        /* なぜ正解のない問いが大切なのか？セクション */
+        .why-no-answer {
+            background: linear-gradient(135deg, #F4F6F7 0%, #EAF2F8 100%); /* 背景調整 */
+        }
+
+        .why-intro {
+            max-width: 850px; /* 幅調整 */
+            margin: 0 auto 60px;
+            text-align: center;
+        }
+
+        .why-intro h3 {
+            font-size: 1.9rem; /* サイズ調整 */
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .why-intro p {
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* minmax調整 */
+            gap: 35px; /* gap調整 */
+            margin-bottom: 60px;
+        }
+
+        .why-card {
+            background: white;
+            padding: 35px 30px; /* パディング調整 */
+            border-radius: 15px; /* 角丸調整 */
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* 影調整 */
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .why-card:hover {
+            transform: translateY(-8px) scale(1.01); /* スケール追加 */
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12); /* 影調整 */
+        }
+
+        .why-card-icon {
+            width: 70px; /* サイズ調整 */
+            height: 70px; /* サイズ調整 */
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem; /* アイコンサイズ調整 */
+            color: white; /* アイコン色 */
+            margin-bottom: 25px; /* マージン調整 */
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* アイコンにも影 */
+        }
+
+        .why-card:nth-child(2) .why-card-icon { background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow)); }
+        .why-card:nth-child(3) .why-card-icon { background: linear-gradient(135deg, var(--accent-pink), #E74C3C); }
+
+        .why-card h4 {
+            font-size: 1.45rem; /* サイズ調整 */
+            color: var(--dark-brown);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .why-card p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .example-box {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 10px; /* 角丸調整 */
+            border-left: 5px solid var(--primary-blue); /* 太さ調整 */
+        }
+
+        .example-box h5 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-size: 1.05rem; /* サイズ調整 */
+            font-weight: 700;
+        }
+
+        .example-list {
+            list-style: none;
+        }
+
+        .example-list li {
+            padding: 8px 0;
+            padding-left: 28px; /* パディング調整 */
+            position: relative;
+            color: #555;
+            font-size: 0.9rem; /* サイズ調整 */
+            line-height: 1.6;
+        }
+
+        .example-list li:before {
+            content: '\f0eb'; /* Font Awesome電球アイコン */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 9px; /* 位置調整 */
+            color: var(--accent-yellow); /* アイコン色 */
+        }
+
+        .key-concept {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            color: white;
+            padding: 50px 40px; /* パディング調整 */
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* 影 */
+        }
+
+        .key-concept h3 {
+            font-size: 2.2rem; /* サイズ調整 */
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .key-concept-term {
+            font-size: 1.6rem; /* サイズ調整 */
+            font-weight: 900;
+            margin-bottom: 15px; /* マージン調整 */
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip-icon {
+            display: inline-flex; /* flexに変更 */
+            align-items: center; /* 中央揃え */
+            justify-content: center; /* 中央揃え */
+            width: 22px; /* サイズ調整 */
+            height: 22px; /* サイズ調整 */
+            background: rgba(255, 255, 255, 0.25); /* 背景調整 */
+            border-radius: 50%;
+            font-size: 11px; /* サイズ調整 */
+            margin-left: 8px; /* マージン調整 */
+            vertical-align: middle; /* 垂直位置調整 */
+            font-weight: normal;
+            transition: background-color 0.3s ease;
+        }
+        .tooltip:hover .tooltip-icon {
+            background-color: rgba(255,255,255,0.4);
+        }
+
+        .tooltip-content {
+            position: absolute;
+            bottom: calc(100% + 10px); /* 吹き出し位置調整 */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(40, 40, 40, 0.95); /* 背景調整 */
+            color: white;
+            padding: 12px 18px; /* パディング調整 */
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5; /* 行間調整 */
+            width: 280px; /* 幅調整 */
+            opacity: 0;
+            visibility: hidden; /* visibility追加 */
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; /* transformも */
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(-50%) translateY(10px); /* 初期位置を少し下に */
+        }
+
+        .tooltip-content:after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: rgba(40, 40, 40, 0.95); /* 背景色に合わせる */
+        }
+
+        .tooltip:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible; /* 表示 */
+            transform: translateX(-50%) translateY(0); /* 上に移動 */
+        }
+
+        .key-concept p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.95;
+            max-width: 700px; /* 幅調整 */
+            margin: 0 auto;
+        }
+
+        .ability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* minmax調整 */
+            gap: 15px; /* gap調整 */
+            margin-top: 35px; /* マージン調整 */
+            max-width: 700px; /* 幅調整 */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .ability-item {
+            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
+            padding: 20px 15px; /* パディング調整 */
+            border-radius: 12px; /* 角丸調整 */
+            text-align: center;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2); /* ボーダー追加 */
+        }
+
+        .ability-item:hover {
+            background: rgba(255, 255, 255, 0.25); /* 背景調整 */
+            transform: translateY(-5px) scale(1.05); /* Y方向移動追加 */
+        }
+
+        .ability-icon {
+            font-size: 2.2rem; /* サイズ調整 */
+            margin-bottom: 8px; /* マージン調整 */
+            color: white; /* アイコン色 */
+        }
+
+        .ability-name {
+            font-size: 0.9rem;
+            font-weight: 500; /* 太さ調整 */
+        }
+
         /* 差別化セクション */
         .difference {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
-            position: relative;
+            background: linear-gradient(135deg, #EAF2F8 0%, #FEF9E7 100%); /* 背景調整 */
         }
         
         .comparison {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
-            gap: 40px;
-            align-items: center;
+            gap: 30px; /* gap調整 */
+            align-items: stretch; /* 高さを揃える */
             margin-top: 60px;
             max-width: 1000px;
             margin-left: auto;
@@ -552,27 +863,30 @@
         
         .comparison-item {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
+            padding: 35px; /* パディング調整 */
+            border-radius: 15px; /* 角丸調整 */
             text-align: center;
             position: relative;
             transition: all 0.3s ease;
+            display: flex; /* flexboxで内部要素を制御 */
+            flex-direction: column; /* 縦並び */
         }
         
         .comparison-item.traditional {
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* 影調整 */
         }
         
         .comparison-item.keepon {
-            box-shadow: 0 10px 40px rgba(93, 173, 226, 0.3);
-            transform: scale(1.05);
-            border: 3px solid var(--primary-blue);
+            box-shadow: 0 12px 45px rgba(93, 173, 226, 0.25); /* 影調整 */
+            transform: scale(1.03); /* 少し控えめに */
+            border: 2px solid var(--primary-blue); /* 太さ調整 */
         }
         
         .comparison-item h3 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.6rem; /* サイズ調整 */
+            margin-bottom: 25px; /* マージン調整 */
             color: var(--dark-brown);
+            font-weight: 700;
         }
         
         .comparison-item.keepon h3 {
@@ -582,92 +896,99 @@
         .comparison-list {
             list-style: none;
             text-align: left;
+            margin-top: auto; /* リストを下に配置 */
         }
         
         .comparison-list li {
-            padding: 10px 0;
-            padding-left: 30px;
+            padding: 12px 0; /* パディング調整 */
+            padding-left: 35px; /* パディング調整 */
             position: relative;
-            color: #666;
+            color: #555;
             line-height: 1.6;
+            font-size: 0.95rem;
         }
         
         .comparison-list li:before {
-            content: '✗';
+            /* content: '✗'; */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            content: '\f00d'; /* Font Awesome バツ印 */
             position: absolute;
-            left: 0;
+            left: 5px; /* 位置調整 */
+            top: 13px; /* 位置調整 */
             color: #E74C3C;
-            font-weight: bold;
+            font-size: 1.1rem; /* アイコンサイズ調整 */
         }
         
         .keepon .comparison-list li:before {
-            content: '✓';
+            /* content: '✓'; */
+            content: '\f00c'; /* Font Awesome チェックマーク */
             color: var(--accent-green);
         }
         
-        .comparison-divider { /* 修正: .vs-circle から変更 */
+        .comparison-divider {
             width: auto;
-            min-width: 80px;
-            height: 60px; /* 少し小さく */
+            min-width: 70px; /* サイズ調整 */
+            height: 50px; /* サイズ調整 */
             background: white;
             border-radius: 10px;
-            padding: 0 20px;
+            padding: 0 15px; /* パディング調整 */
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.1rem; /* テキストに合わせて調整 */
+            font-size: 1rem; /* サイズ調整 */
             color: var(--dark-brown);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* 影調整 */
             position: relative;
             z-index: 1;
-            border: 2px solid #eee;
+            border: 1px solid #eee; /* ボーダー調整 */
+            align-self: center; /* 中央に配置 */
         }
-        
+
         /* ターゲットセクション */
         .target {
-            padding: 80px 0;
             background: white;
         }
         
-        /* 追加: 保護者の問いかけスタイル */
         .parent-question-container {
             display: flex;
             align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 20px; /* gap調整 */
+            margin-bottom: 40px; /* マージン調整 */
             justify-content: center;
             padding: 0 20px;
-            max-width: 700px; /* 中央寄せのための幅 */
+            max-width: 750px; /* 幅調整 */
             margin-left: auto;
             margin-right: auto;
         }
 
         .parent-icon-wrapper {
             flex-shrink: 0;
-            padding-top: 5px; 
+            padding-top: 8px; /* 位置調整 */
         }
 
         .parent-face-icon {
-            font-size: 2.8rem; 
+            font-size: 3rem; /* サイズ調整 */
             display: inline-block;
-            line-height: 1; /* 絵文字のベースライン調整 */
+            line-height: 1;
+            color: var(--secondary-orange); /* 色付け */
         }
 
         .speech-bubble {
             position: relative;
             background-color: var(--primary-blue);
             color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            max-width: 480px; 
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-            flex-grow: 1; /* 幅を確保 */
+            padding: 18px 25px; /* パディング調整 */
+            border-radius: 15px; /* 角丸調整 */
+            max-width: 500px; /* 幅調整 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* 影調整 */
+            flex-grow: 1;
         }
 
         .speech-bubble p {
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem); /* 元のh2に近づける */
-            font-weight: 600; 
+            font-size: clamp(1.05rem, 2.2vw, 1.2rem); /* サイズ調整 */
+            font-weight: 500; /* 太さ調整 */
             line-height: 1.5;
             margin: 0;
         }
@@ -675,45 +996,44 @@
         .speech-bubble::before {
             content: "";
             position: absolute;
-            top: 18px; /* 位置調整 */
-            left: -10px; 
+            top: 20px; /* 位置調整 */
+            left: -12px; /* 位置調整 */
             width: 0;
             height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-right: 10px solid var(--primary-blue);
+            border-top: 12px solid transparent; /* サイズ調整 */
+            border-bottom: 12px solid transparent; /* サイズ調整 */
+            border-right: 12px solid var(--primary-blue); /* サイズ調整 */
         }
         
-        /* 既存のsection-titleへの調整 */
         .target .section-title {
-             margin-top: 1em; /* 吹き出しとのスペース */
+             margin-top: 1em;
         }
-        .target .section-title:after { /* 吹き出しで隠れないように調整 */
+        .target .section-title:after {
             bottom: -20px;
         }
 
-
         .target-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* minmax調整 */
             gap: 30px;
             margin-top: 60px;
         }
         
         .target-item {
             text-align: center;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 35px 30px; /* パディング調整 */
+            border-radius: 15px; /* 角丸調整 */
             background: var(--light-bg);
-            transition: all 0.3s ease;
-            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: default; /* pointerから変更 */
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); /* 初期影 */
         }
         
         .target-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* 影調整 */
         }
         
         .target-item:before {
@@ -722,10 +1042,11 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
+            height: 5px; /* 太さ調整 */
             background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
             transform: scaleX(0);
-            transition: transform 0.3s ease;
+            transform-origin: left; /* 左から広がる */
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
         .target-item:hover:before {
@@ -733,68 +1054,59 @@
         }
         
         .target-emoji {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.8rem; /* サイズ調整 */
+            margin-bottom: 20px; /* マージン調整 */
             display: inline-block;
-            animation: bounce 2s infinite;
-            animation-delay: calc(var(--index) * 0.1s);
+            animation: bounce 2.5s infinite ease-in-out; /* イージング調整 */
+            animation-delay: calc(var(--index) * 0.15s); /* 遅延調整 */
         }
         
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
+        @keyframes bounce { /* アニメーション微調整 */
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(0deg); }
+            40% { transform: translateY(-12px) rotate(-5deg); }
+            60% { transform: translateY(-6px) rotate(3deg); }
         }
         
         .target-text {
             font-size: 1rem;
-            color: #666;
-            line-height: 1.6;
+            color: #555;
+            line-height: 1.7; /* 行間調整 */
         }
         
         .welcome-message {
             text-align: center;
-            margin-top: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, rgba(93, 173, 226, 0.1), rgba(82, 196, 26, 0.1));
-            border-radius: 20px;
-            font-size: 1.2rem;
+            margin-top: 50px; /* マージン調整 */
+            padding: 35px; /* パディング調整 */
+            background: linear-gradient(135deg, rgba(93, 173, 226, 0.08), rgba(82, 196, 26, 0.08)); /* 透明度調整 */
+            border-radius: 15px; /* 角丸調整 */
+            font-size: 1.25rem; /* サイズ調整 */
             color: var(--dark-brown);
+            font-weight: 500;
+            border: 1px solid rgba(0,0,0,0.05); /* 薄いボーダー */
         }
         
         /* CLAFTセクション */
         .claft {
-            padding: 80px 0;
             background: linear-gradient(135deg, #2C3E50, #3498DB);
             color: white;
-            position: relative;
-            overflow: hidden;
         }
         
-        .claft:before {
+        .claft:before { /* SVGパターンの代わりにCSSグラデーション */
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 200%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 30c11 0 20 9 20 20s-9 20-20 20-20-9-20-20 9-20 20-20z' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'/%3E%3C/svg%3E") repeat;
-            animation: slide 20s linear infinite;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 10px 10px, rgba(255,255,255,0.05) 1px, transparent 0),
+                radial-gradient(circle at 60px 60px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 100px 100px;
+            opacity: 0.5;
+            animation: slideBackground 20s linear infinite;
         }
         
-        @keyframes slide {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(50%);
-            }
+        @keyframes slideBackground {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
         }
         
         .claft-content {
@@ -805,117 +1117,137 @@
         
         .claft-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 30px;
+            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
+            padding: 12px 35px; /* パディング調整 */
             border-radius: 50px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            backdrop-filter: blur(10px);
+            margin-bottom: 25px; /* マージン調整 */
+            font-weight: 700; /* 太さ調整 */
+            backdrop-filter: blur(8px); /* blur調整 */
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
         }
         
         .claft-title {
-            font-size: 3rem;
-            margin-bottom: 20px;
+            font-size: clamp(2.5rem, 5.5vw, 3.5rem); /* サイズ調整 */
+            margin-bottom: 25px; /* マージン調整 */
             font-weight: 900;
         }
         
         .claft-description {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto 40px;
+            font-size: 1.25rem; /* サイズ調整 */
+            max-width: 850px; /* 幅調整 */
+            margin: 0 auto 45px; /* マージン調整 */
             line-height: 1.8;
             opacity: 0.9;
         }
         
         .claft-features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* minmax調整 */
             gap: 30px;
             margin-top: 40px;
-            max-width: 800px;
+            max-width: 900px; /* 幅調整 */
             margin-left: auto;
             margin-right: auto;
         }
         
         .claft-feature {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08); /* 背景調整 */
+            padding: 35px 30px; /* パディング調整 */
+            border-radius: 15px; /* 角丸調整 */
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15); /* ボーダー調整 */
             transition: all 0.3s ease;
         }
         
         .claft-feature:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
+            transform: translateY(-8px) scale(1.02); /* スケール追加 */
         }
         
         .claft-feature-icon {
-            font-size: 2rem;
-            margin-bottom: 15px;
+            font-size: 2.5rem; /* サイズ調整 */
+            margin-bottom: 20px; /* マージン調整 */
+            color: var(--accent-yellow); /* アイコン色 */
         }
         
         .claft-feature-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* サイズ調整 */
             margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .claft-feature p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.7;
         }
         
-        /* CTAセクション */
+        /* 最終CTAセクション */
         .final-cta {
-            padding: 100px 0;
-            background: linear-gradient(135deg, #FFF3E0 0%, #E3F2FD 100%);
+            background: linear-gradient(135deg, #FEF9E7 0%, #EBF5FB 100%); /* 背景調整 */
             text-align: center;
-            position: relative;
         }
         
         .final-cta-content h2 {
-            font-size: 2.5rem;
+            font-size: clamp(2.2rem, 5vw, 2.8rem); /* サイズ調整 */
             color: var(--dark-brown);
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* マージン調整 */
+            font-weight: 700;
         }
         
         .final-cta-content p {
             font-size: 1.2rem;
-            color: #666;
-            max-width: 600px;
-            margin: 0 auto 40px;
+            color: #555;
+            max-width: 700px; /* 幅調整 */
+            margin: 0 auto 45px; /* マージン調整 */
             line-height: 1.8;
         }
         
-        .cta-buttons {
+        .cta-buttons { /* ヒーローセクションの .cta-group と共通化も検討 */
             display: flex;
-            gap: 20px;
+            gap: 25px; /* gap調整 */
             justify-content: center;
             flex-wrap: wrap;
         }
         
         .cta-button {
-            padding: 20px 50px;
+            padding: 18px 45px; /* パディング調整 */
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* サイズ調整 */
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            border: 2px solid transparent; /* ホバー用 */
+        }
+        .cta-button .icon {
+            margin-left: 10px;
         }
         
         .cta-button.primary {
             background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
             color: white;
-            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.3);
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.25); /* 影調整 */
         }
         
         .cta-button.secondary {
             background: white;
             color: var(--primary-blue);
             border: 2px solid var(--primary-blue);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); /* 影追加 */
         }
         
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px) scale(1.03); /* スケール追加 */
+        }
+        .cta-button.primary:hover {
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.35); /* 影調整 */
+        }
+        .cta-button.secondary:hover {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 10px 30px rgba(93, 173, 226, 0.25); /* 影調整 */
         }
         
         /* アクセス情報 */
@@ -924,36 +1256,51 @@
             padding: 40px;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* 影調整 */
+            max-width: 700px; /* 幅調整 */
             margin-left: auto;
             margin-right: auto;
         }
         
         .access-info h3 {
             color: var(--dark-brown);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            margin-bottom: 25px; /* マージン調整 */
+            font-size: 1.6rem; /* サイズ調整 */
+            font-weight: 700;
         }
         
         .access-info p {
-            color: #666;
+            color: #555;
             line-height: 1.8;
-            margin-bottom: 10px;
+            margin-bottom: 15px; /* マージン調整 */
+            font-size: 1rem;
+        }
+        .access-info p strong {
+            color: var(--dark-brown);
+            font-weight: 700;
         }
         
-        .access-info .tel {
-            font-size: 1.5rem;
+        .access-info .tel a { /* 電話番号をリンクに */
+            font-size: 1.6rem; /* サイズ調整 */
             color: var(--primary-blue);
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 25px; /* マージン調整 */
+            text-decoration: none;
+            display: inline-block; /* ホバーエフェクトのため */
+            transition: color 0.3s ease;
+        }
+        .access-info .tel a:hover {
+            color: var(--accent-green);
+        }
+        .access-info .tel .icon {
+            margin-right: 8px;
         }
         
         /* フッター */
         footer {
             background: var(--dark-brown);
-            color: white;
-            padding: 40px 0;
+            color: rgba(255,255,255,0.8); /* 文字色調整 */
+            padding: 50px 0 30px; /* パディング調整 */
             text-align: center;
         }
         
@@ -964,86 +1311,94 @@
         }
         
         .footer-logo {
-            width: 120px;
-            margin-bottom: 20px;
-            filter: brightness(0) invert(1);
+            /* width: 120px; */ /* テキストロゴなので不要 */
+            font-size: 1.5rem; /* フッター用ロゴサイズ */
+            font-weight: 900;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 25px; /* マージン調整 */
+            display: inline-block;
+            /* filter: brightness(0) invert(1); */ /* テキストロゴなので不要 */
         }
+        .footer-logo span { color: var(--primary-blue); } /* メインロゴと同じスタイル */
         
         .footer-links {
             display: flex;
-            gap: 30px;
+            gap: 25px; /* gap調整 */
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* マージン調整 */
             flex-wrap: wrap;
         }
         
         .footer-links a {
-            color: white;
+            color: rgba(255,255,255,0.7); /* 透明度調整 */
             text-decoration: none;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
+            transition: color 0.3s ease, opacity 0.3s ease; /* colorも */
+            font-size: 0.9rem;
         }
         
         .footer-links a:hover {
+            color: white; /* ホバー時色変更 */
             opacity: 1;
         }
         
         .copyright {
             opacity: 0.6;
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* サイズ調整 */
+            margin-top: 20px; /* 上とのスペース */
         }
         
         /* レスポンシブ */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-            
+        @media (max-width: 992px) { /* タブレット向け調整 */
             .concept-content {
                 grid-template-columns: 1fr;
-                text-align: center;
+                gap: 40px;
+                text-align: center; /* 中央寄せ */
             }
-            
+            .concept-image-placeholder {
+                margin: 0 auto; /* 中央寄せ */
+                max-width: 500px; /* 最大幅 */
+            }
             .comparison {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: 1fr; /* 縦積みに */
+                gap: 25px;
             }
-            
-            .comparison-divider { /* 修正: .vs-circle から変更 */
-                margin: 20px auto;
+            .comparison-divider {
+                margin: 15px auto; /* マージン調整 */
+                transform: rotate(90deg); /* VSを縦に */
+                width: 50px; height: 70px; /* サイズ調整 */
             }
-            
-            .comparison-item.keepon {
-                transform: none;
-            }
-            
-            .pillars-grid {
-                grid-template-columns: 1fr;
-            }
+        }
+
+        @media (max-width: 768px) {
+            :root { --header-height: 70px; }
+            section { padding: 80px 0; }
+            .hero-title { font-size: 2.2rem; } /* clampの上限に近い値に */
+            .hero-subtitle { font-size: 1.25rem; }
+            .section-title { font-size: 2rem; margin-bottom: 50px; }
+            .section-title:after { width: 70px; height: 4px; bottom: -15px; }
+
+            .pillars-grid { grid-template-columns: 1fr; gap: 30px; }
             
             .cta-group {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
-            .cta-primary {
+            .cta-primary, .cta-button { /* CTAボタンは中央揃え */
                 text-align: center;
+                font-size: 1rem;
+                padding: 15px 30px;
             }
 
-            /* 追加: 保護者の問いかけ レスポンシブ */
             .parent-question-container {
                 flex-direction: column;
                 align-items: center;
-                text-align: center; /* 吹き出し内テキストも中央寄せにする場合 */
+                text-align: center;
             }
             .speech-bubble {
-                max-width: 90%; /* 幅を広げる */
+                max-width: 90%;
             }
-            .speech-bubble::before { /* しっぽを上に */
+            .speech-bubble::before { /* 吹き出しの▲を上に */
                 left: 50%;
                 transform: translateX(-50%);
                 top: -10px;
@@ -1056,743 +1411,562 @@
                 margin-bottom: 10px;
                 padding-top: 0;
             }
+            
+            .why-grid { grid-template-columns: 1fr; gap: 30px; }
+            .ability-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            
+            .tooltip-content {
+                width: 90vw; /* 幅を画面幅に追従 */
+                max-width: 250px; /* 最大幅設定 */
+                font-size: 0.85rem;
+            }
+
+            .claft-title { font-size: 2.2rem; }
+            .claft-description { font-size: 1.1rem; }
+            .claft-features { grid-template-columns: 1fr; }
+
+            .final-cta-content h2 { font-size: 1.8rem; }
+            .final-cta-content p { font-size: 1.1rem; }
+
+            .header-container { padding: 0 15px; }
+            .logo { font-size: 1.6rem; }
+            .cta-header { padding: 8px 20px; font-size: 14px;}
         }
         
-        /* スクロールアニメーション */
+        @media (max-width: 480px) { /* スマホ向けさらに調整 */
+            .hero-title { font-size: 1.8rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .section-title { font-size: 1.8rem; }
+            .problem-list { grid-template-columns: 1fr; } /* 悩みは1カラム */
+            .target-grid { grid-template-columns: 1fr; } /* ターゲットも1カラム */
+            .ability-grid { gap: 10px; }
+            .ability-item { padding: 15px 10px; }
+            .ability-icon { font-size: 1.8rem; }
+            .ability-name { font-size: 0.8rem; }
+        }
+
+        /* スクロールアニメーション (JavaScriptで制御) */
         .fade-in {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
+            transform: translateY(40px); /* 少し大きく */
+            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition-delay: 0.1s; /* 少し遅延 */
         }
         
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        /* ローディングアニメーション */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .loader-content {
-            text-align: center;
-        }
-        
-        .loader-tree {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
+
+        /* Delay classes for staggered animation */
+        .delay-1 { transition-delay: 0.2s !important; }
+        .delay-2 { transition-delay: 0.3s !important; }
+        .delay-3 { transition-delay: 0.4s !important; }
+        .delay-4 { transition-delay: 0.5s !important; }
+
     </style>
 </head>
 <body>
     <!-- ローディング画面 -->
     <div class="loader" id="loader">
         <div class="loader-content">
-            <svg class="loader-tree" viewBox="0 0 200 200">
-                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
-                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
-                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
-                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
-                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
-                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
-            </svg>
-            <p style="color: #666;">Loading...</p>
+            <div class="loader-spinner"></div>
+            <p class="loader-text">読み込み中...</p>
         </div>
     </div>
 
     <!-- ヘッダー -->
     <header id="header">
         <div class="header-container">
-            <svg class="logo" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet"> <!-- preserveAspectRatio追加 -->
-                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
-                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
-                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
-                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
-                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
-                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
-                <text x="100" y="220" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#2C1810">Keepon</text>
-            </svg>
-            <a href="https://www.keeponlearning.fun/contact" class="cta-header">無料体験に申し込む</a>
+            <a href="#" class="logo-link"><div class="logo">キープオン<span>スクール</span></div></a>
+            <nav>
+                <!-- ナビゲーションリンクを追加する場合はここに -->
+            </nav>
+            <a href="#final-cta" class="cta-header">無料体験はこちら</a>
         </div>
     </header>
 
-    <!-- ヒーローセクション -->
-    <section class="hero">
-        <div class="floating-shapes">
-            <div class="shape shape1"></div>
-            <div class="shape shape2"></div>
-            <div class="shape shape3"></div>
-        </div>
-        <div class="hero-container">
-            <div class="hero-content fade-in">
-                <h1 class="hero-title">
-                    <span>プログラミングだけじゃない！</span>
-                </h1>
-                <p class="hero-subtitle">
-                    キープオンスクールは<br>
-                    ロボットプログラミングをきっかけに<br>
-                    学びを広げる"居場所"です
-                </p>
-                <p class="hero-description">
-                    「学校の勉強、なんだかやる気が出ない…」<br>
-                    「周りの子と比べてしまって不安…」<br>
-                    そんな悩みを抱えるお子さんや保護者の方へ。<br>
-                    キープオンスクールは、ただの習い事ではありません。<br>
-                    子どもたちが自分で考え、行動する力を育みながら、<br>
-                    安心して自分らしくいられる「居場所」です。
-                </p>
-                <div class="cta-group">
-                    <a href="https://www.keeponlearning.fun/contact" class="cta-primary">
-                        🎯 無料体験に今すぐ申し込む
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 悩みセクション -->
-    <section class="problems">
-        <div class="container">
-            <h2 class="section-title fade-in">こんなお悩みありませんか？</h2>
-            <div class="problem-list fade-in">
-                <div class="problem-item">
-                    <div class="problem-icon">😔</div>
-                    <p class="problem-text">学校の勉強に興味が持てない、やる気が出ない</p>
-                </div>
-                <div class="problem-item">
-                    <div class="problem-icon">😰</div>
-                    <p class="problem-text">周りの子と比べて焦ってしまう、自信が持てない</p>
-                </div>
-                <div class="problem-item">
-                    <div class="problem-icon">🤔</div>
-                    <p class="problem-text">何か習い事をさせたいけど、子どもに合うものが見つからない</p>
-                </div>
-                <div class="problem-item">
-                    <div class="problem-icon">😟</div>
-                    <p class="problem-text">学校に行きづらい、集団が苦手で居場所がない</p>
-                </div>
-                <div class="problem-item">
-                    <div class="problem-icon">💭</div>
-                    <p class="problem-text">好きなことは見つけてほしいけど、押し付けたくない</p>
-                </div>
-                <div class="problem-item">
-                    <div class="problem-icon">🎯</div>
-                    <p class="problem-text">将来に役立つ力を身につけさせたいけど、何から始めれば...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- コンセプトセクション -->
-    <section class="concept">
-        <div class="container">
-            <h2 class="section-title fade-in">キープオンスクールって、<br>ロボット教室...だけじゃないの？</h2>
-            <div class="concept-content fade-in">
-                <div class="concept-text">
-                    <h3>「キープオンスクールって、ロボット教室なんでしょ？」</h3>
-                    <p>よくそう聞かれますが、実はそれだけではないんです！</p>
-                    <p>もちろん、大人気のロボットプログラミングも学べます。</p>
-                    <p>でも、私たちが一番大切にしているのは、子どもたちが<span class="highlight">「自分で考えて、いろんな人と話し合い、自分から行動する力」</span>を育むこと。</p>
-                    <p>キープオンスクールは、習い事というよりも、子どもたちにとって<span class="highlight">安心できる「居場所」</span>でありたいと考えています。</p>
-                </div>
-                <div class="concept-image">
-                    <div class="concept-image-placeholder">
-                        子どもたちの活動写真
+    <main>
+        <!-- ヒーローセクション -->
+        <section class="hero" id="hero">
+            <div class="hero-container">
+                <div class="hero-content fade-in">
+                    <h1 class="hero-title"><span>「自分で考える力」</span>を育む<br>未来のためのプログラミング</h1>
+                    <h2 class="hero-subtitle">ロボットプログラミングを通じて、<br>子どもたちの好奇心と創造力を無限に広げる場所。</h2>
+                    <p class="hero-description">
+                        キープオンスクールは、単にスキルを教えるだけではありません。<br>
+                        「なぜ？」「どうすれば？」と問い続ける楽しさを知り、<br>
+                        失敗を恐れず挑戦する心を育みます。
+                    </p>
+                    <div class="cta-group">
+                        <a href="#final-cta" class="cta-primary">無料体験に申し込む <i class="fas fa-arrow-right icon"></i></a>
+                        <!-- <a href="#concept" class="cta-secondary">もっと詳しく <i class="fas fa-chevron-down icon"></i></a> -->
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+            <div class="floating-shapes">
+                <div class="shape shape1"></div>
+                <div class="shape shape2"></div>
+                <div class="shape shape3"></div>
+            </div>
+        </section>
 
-    <!-- 3つの柱セクション -->
-    <section class="pillars">
-        <div class="container">
-            <h2 class="section-title fade-in">キープオンスクールで体験できる<br>「３つの学びの柱」</h2>
-            <div class="pillars-grid fade-in">
-                <!-- ロボットプログラミング -->
-                <div class="pillar-card" onclick="togglePillar(this)">
-                    <div class="pillar-header pillar-header1">
-                        <div class="pillar-number">1</div>
-                        <div class="pillar-icon">🤖</div>
-                        <h3 class="pillar-title">ロボットプログラミング</h3>
-                        <p class="pillar-subtitle">「できた！」が自信になる！<br>問題を見つけて解決する力を育てよう</p>
-                        <div class="expand-icon">⌄</div>
+        <!-- こんなお悩みありませんか？ -->
+        <section class="problems" id="problems">
+            <div class="container">
+                <h2 class="section-title fade-in">こんなお悩みありませんか？</h2>
+                <div class="problem-list">
+                    <div class="problem-item fade-in delay-1" data-index="0">
+                        <div class="problem-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <h3 class="problem-text">子どもの将来のために何かさせたいけど、何がいいか分からない…</h3>
                     </div>
-                    <div class="pillar-content">
-                        <h4>どんなことをするの？</h4>
-                        <p>ブロックでロボットを組み立てて、パソコンでプログラミング！自分の作ったロボットが目の前で動くから、プログラミングの仕組みが「見て」「感じて」よくわかります。</p>
-                        <p>「どうしたらもっとうまく動くかな？」と自分で考えるうちに、問題を見つける力や、それを解決する力が自然と身につきます。</p>
-                        <div class="pillar-point">
-                            <strong>ここがポイント！</strong><br>
-                            テキスト通りに作るだけじゃなく、オリジナルのロボットを作って発表する「ロボット発表会」も！自分のアイデアを形にする楽しさを体験できます。「難しいかな？」と心配な子も大丈夫！スタッフが一人ひとりに合わせて、自分で「できた！」と気づけるようにサポートします。
-                        </div>
+                    <div class="problem-item fade-in delay-2" data-index="1">
+                        <div class="problem-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h3 class="problem-text">学校の勉強だけでなく、これからの時代に必要な実践的な力を身につけさせたい。</h3>
+                    </div>
+                    <div class="problem-item fade-in delay-3" data-index="2">
+                        <div class="problem-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h3 class="problem-text">ゲームばかりで心配。もっと創造的な活動に興味を持ってほしい。</h3>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Yononaka -->
-                <div class="pillar-card" onclick="togglePillar(this)">
-                    <div class="pillar-header pillar-header2">
-                        <div class="pillar-number">2</div>
-                        <div class="pillar-icon">💬</div>
-                        <h3 class="pillar-title">Yononaka</h3>
-                        <p class="pillar-subtitle">正解は一つじゃない！<br>いろんな意見に触れて、自分の世界を広げよう</p>
-                        <div class="expand-icon">⌄</div>
+        <!-- コンセプト：キープオンは「居場所」 -->
+        <section class="concept" id="concept">
+            <div class="container">
+                <h2 class="section-title fade-in">キープオンは「学びの居場所」</h2>
+                <div class="concept-content">
+                    <div class="concept-text fade-in delay-1">
+                        <h3><span class="highlight">「正解のない問い」</span>を楽しむ、<br>新感覚の学び体験。</h3>
+                        <p>
+                            私たちは、子どもたちが安心して自分を表現でき、失敗を恐れずに挑戦できる「居場所」であることを大切にしています。
+                            プログラミングは、そのための最高のツールです。
+                        </p>
+                        <p>
+                            ロボットを組み立て、プログラムで命を吹き込む。その過程で生まれる「なぜ？」「こうしたらどうなる？」という疑問こそが、学びの原動力。
+                            私たちは答えを教えるのではなく、子どもたちが<span class="highlight">自分で考え、試行錯誤し、答えを見つけ出す</span>プロセスを全力でサポートします。
+                        </p>
                     </div>
-                    <div class="pillar-content">
-                        <h4>どんなことをするの？</h4>
-                        <p>「お金って何だろう？」「生きるってどういうこと？」…学校ではあまり話さないような、でもとっても大切なテーマについて、いろんな年齢や学校の仲間たちとオンラインで話し合います。</p>
-                        <div class="pillar-point">
-                            <strong>ここがポイント！</strong><br>
-                            ここには「覚えなきゃいけない正解」はありません。だから「間違ったらどうしよう…」なんて心配はいりません！いろんな人の考えを聞いて、「そんな考え方もあるんだ！」と新しい発見をしたり、自分の意見を伝える練習をしたりすることで、コミュニケーション力や、自分自身のこと、そして他の人のことをもっと深く理解できるようになります。
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PBL -->
-                <div class="pillar-card" onclick="togglePillar(this)">
-                    <div class="pillar-header pillar-header3">
-                        <div class="pillar-number">3</div>
-                        <div class="pillar-icon">🔍</div>
-                        <h3 class="pillar-title">PBL（課題解決型学習）</h3>
-                        <p class="pillar-subtitle">「なんでだろう？」から始まる！<br>自分で学びをデザインする力を育てよう</p>
-                        <div class="expand-icon">⌄</div>
-                    </div>
-                    <div class="pillar-content">
-                        <h4>どんなことをするの？</h4>
-                        <p>※PBLとは…Problem Based Learning の略で、「自分で課題を見つけて解決する学習」のことです。</p>
-                        <p>「鳥ってなんで飛ぶんだろう？」「私の好きなゲームはどうやって作られてるの？」…そんな身近な「なぜ？」を自分で見つけて、本やインターネットで調べて、分かったことをみんなの前で発表します。</p>
-                        <div class="pillar-point">
-                            <strong>ここがポイント！</strong><br>
-                            学校の宿題のように「これをやりなさい」と決められるのではなく、自分の「知りたい！」という気持ちが学びのスタート！自分でテーマを決めて、調べて、まとめて、発表することで、計画力や表現力、そして何よりも「自分で学ぶ楽しさ」を実感できます。これは、将来どんな道に進むにも役立つ「生きる力」そのものです。
+                    <div class="concept-image fade-in delay-2">
+                        <div class="concept-image-placeholder">
+                            <!-- 画像がないので、このままデザインされたプレースホルダとして機能 -->
+                            <!-- <p>未来を創る子どもたち</p> -->
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 差別化セクション -->
-    <section class="difference">
-        <div class="container">
-            <h2 class="section-title fade-in">「他の習い事と、どこが違うの？」<br>キープオンスクールが大切にしていること</h2>
-            <div class="comparison fade-in">
-                <div class="comparison-item traditional">
-                    <h3>一般的な塾・習い事</h3>
-                    <ul class="comparison-list">
-                        <li>決められた問題を解く</li>
-                        <li>正解を覚える</li>
-                        <li>テストの点数で評価</li>
-                        <li>みんな同じペース</li>
-                        <li>やらされる勉強</li>
-                    </ul>
-                </div>
-                <div class="comparison-divider">比較</div> <!-- 修正: .vs-circle から変更 -->
-                <div class="comparison-item keepon">
-                    <h3>キープオンスクール</h3>
-                    <ul class="comparison-list">
-                        <li>自分で課題を見つける</li>
-                        <li>考え方を身につける</li>
-                        <li>成長過程を大切に</li>
-                        <li>一人ひとりのペース</li>
-                        <li>夢中になれる学び</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="container" style="margin-top: 60px;">
-                <p style="text-align: center; font-size: 1.1rem; color: #666; line-height: 1.8;">
-                    多くの塾や習い事では、あらかじめ決められた問題に「正しい答え」を出すことが求められますよね。<br>
-                    もちろん、それも大切な学びの一つです。<br><br>
-                    でも、キープオンスクールは少し違います。<br>
-                    私たちは、子どもたちが<strong>「これをやってみたい！」「これが気になる！」という<br>
-                    自分の気持ちから始まる学び</strong>を応援したいと思っています。<br><br>
-                    「やらされる勉強」ではなく、夢中になって「これ面白い！もっと知りたい！」と<br>
-                    自分でどんどん探求していく。<br>
-                    そんな<strong>「学びの楽しさ」</strong>に気づいてほしい。<br>
-                    それが、キープオンスクールの願いです。
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ターゲットセクション -->
-    <section class="target">
-        <div class="container">
-            <!-- 修正: 保護者の問いかけを追加 -->
-            <div class="parent-question-container fade-in">
-                <div class="parent-icon-wrapper">
-                    <span class="parent-face-icon">🤔</span>
-                </div>
-                <div class="speech-bubble">
-                    <p>「うちの子には、どんなところがあってるかな？」</p>
-                </div>
-            </div>
-            <h2 class="section-title fade-in">
-                キープオンスクールは、こんなお子さんを待っています！
-            </h2>
-            <div class="target-grid fade-in">
-                <div class="target-item" style="--index: 0">
-                    <div class="target-emoji">🤖</div>
-                    <p class="target-text">ロボットやプログラミングが大好き！もっと本格的にやってみたい子</p>
-                </div>
-                <div class="target-item" style="--index: 1">
-                    <div class="target-emoji">❓</div>
-                    <p class="target-text">「なんで？」「どうして？」がいっぱいで、いろんなことを知りたがり屋さんな子</p>
-                </div>
-                <div class="target-item" style="--index: 2">
-                    <div class="target-emoji">💡</div>
-                    <p class="target-text">自分の考えやアイデアを形にして、誰かに伝えてみたい子</p>
-                </div>
-                <div class="target-item" style="--index: 3">
-                    <div class="target-emoji">🚀</div>
-                    <p class="target-text">学校の勉強とは違う、新しいことにチャレンジしてみたい子</p>
-                </div>
-                <div class="target-item" style="--index: 4">
-                    <div class="target-emoji">🏠</div>
-                    <p class="target-text">学校に行くのが少し苦手だったり、大勢の人がいる場所がちょっと得意じゃない子</p>
-                </div>
-                <div class="target-item" style="--index: 5">
-                    <div class="target-emoji">🌟</div>
-                    <p class="target-text">「自分のペースで学びたい」「好きなことを見つけたい」と思っている子</p>
-                </div>
-            </div>
-            <div class="welcome-message fade-in">
-                <p>キープオンスクールは、どんなお子さんでも大歓迎です！<br>
-                実際に、不登校を経験しているお子さんもたくさん通ってくれています。<br>
-                難しい勉強を無理やりさせるのではなく、<br>
-                一人ひとりの「好き」や「やってみたい」という気持ちを大切に、<br>
-                安心して過ごせる「居場所」でありたいと思っています。</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- CLAFTセクション -->
-    <section class="claft">
-        <div class="container">
-            <div class="claft-content fade-in">
-                <div class="claft-badge">2025年スタート！</div>
-                <h2 class="claft-title">CLAFT</h2>
-                <p class="claft-description">
-                    もっと多くの子どもたちに「学ぶ楽しさ」を届けたいという想いから、<br>
-                    2025年に新しいオンラインスクール／フリースクール「CLAFT」をスタートする予定です！
-                </p>
-                <div class="claft-features">
-                    <div class="claft-feature">
-                        <div class="claft-feature-icon">🌍</div>
-                        <h3 class="claft-feature-title">全国どこからでも</h3>
-                        <p>オンラインだから場所を選ばず参加できます</p>
+        <!-- 私たちが大切にする3つの柱 -->
+        <section class="pillars" id="pillars">
+            <div class="container">
+                <h2 class="section-title fade-in">キープオンが大切にする3つの柱</h2>
+                <div class="pillars-grid">
+                    <div class="pillar-card fade-in delay-1" data-index="0">
+                        <div class="pillar-header pillar-header1">
+                            <div class="pillar-number">01</div>
+                            <div class="pillar-icon"><i class="fas fa-brain"></i></div>
+                            <h3 class="pillar-title">自考力と探求心</h3>
+                            <p class="pillar-subtitle">自分で考え、答えを見つける喜び</p>
+                            <div class="expand-icon"><i class="fas fa-plus"></i></div>
+                        </div>
+                        <div class="pillar-content">
+                            <h4>「なぜ？」から始まる学び</h4>
+                            <p>
+                                子どもたちの純粋な「なぜ？」を大切にし、それを探求する旅に伴走します。
+                                指示された通りに作るのではなく、自分のアイデアを形にする過程で、論理的思考力や問題解決能力が自然と身につきます。
+                            </p>
+                            <div class="pillar-point">
+                                <strong>ポイント：</strong>身近なものの仕組みをプログラミングで再現し、そこから新しい発見へと繋げます。
+                            </div>
+                        </div>
                     </div>
-                    <div class="claft-feature">
-                        <div class="claft-feature-icon">💖</div>
-                        <h3 class="claft-feature-title">非認知能力を育む</h3>
-                        <p>優しさ、好奇心、やり抜く力など生きる力を重視</p>
+                    <div class="pillar-card fade-in delay-2" data-index="1">
+                        <div class="pillar-header pillar-header2">
+                            <div class="pillar-number">02</div>
+                            <div class="pillar-icon"><i class="fas fa-users"></i></div>
+                            <h3 class="pillar-title">協調性と表現力</h3>
+                            <p class="pillar-subtitle">仲間と共に創り、伝える力</p>
+                            <div class="expand-icon"><i class="fas fa-plus"></i></div>
+                        </div>
+                        <div class="pillar-content">
+                            <h4>チームで挑戦、アイデアを共有</h4>
+                            <p>
+                                グループワークや発表の機会を通じて、自分の考えを相手に分かりやすく伝える力や、多様な意見を尊重し協力する力を育みます。
+                                仲間と刺激し合うことで、一人では思いつかないアイデアが生まれることも。
+                            </p>
+                            <div class="pillar-point">
+                                <strong>ポイント：</strong>定期的な発表会や作品共有会で、プレゼンテーション能力も向上します。
+                            </div>
+                        </div>
                     </div>
-                    <div class="claft-feature">
-                        <div class="claft-feature-icon">🎯</div>
-                        <h3 class="claft-feature-title">テストで評価しない</h3>
-                        <p>一人ひとりの成長を大切にする新しい学び</p>
+                    <div class="pillar-card fade-in delay-3" data-index="2">
+                        <div class="pillar-header pillar-header3">
+                            <div class="pillar-number">03</div>
+                            <div class="pillar-icon"><i class="fas fa-rocket"></i></div>
+                            <h3 class="pillar-title">創造性と挑戦する心</h3>
+                            <p class="pillar-subtitle">失敗を恐れず、未来を切り拓く</p>
+                            <div class="expand-icon"><i class="fas fa-plus"></i></div>
+                        </div>
+                        <div class="pillar-content">
+                            <h4>失敗は成功のもと</h4>
+                            <p>
+                                プログラミングにエラーはつきもの。それを乗り越える経験が、粘り強さと自信を育てます。
+                                自由な発想を歓迎し、ユニークなアイデアを形にする過程で、子どもたちの創造性は大きく花開きます。
+                            </p>
+                            <div class="pillar-point">
+                                <strong>ポイント：</strong>「こんなのできた！」という達成感が、次への挑戦意欲を引き出します。
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p style="margin-top: 40px; opacity: 0.9;">
-                    詳細は決まり次第お知らせしますので、お楽しみに！
-                </p>
             </div>
-        </div>
-    </section>
-
-    <!-- 最終CTAセクション -->
-    <section class="final-cta">
-        <div class="container">
-            <div class="final-cta-content fade-in">
-                <h2>まずは一歩、踏み出してみませんか？</h2>
-                <p>
-                    キープオンスクールは、ロボットプログラミングを学ぶだけの場所ではありません。<br>
-                    子どもたちが自分らしく輝き、未来を切り拓くための「土台」と「きっかけ」を作る場所です。
-                </p>
-                <p>
-                    「うちの子にも合うかな？」「どんな雰囲気なんだろう？」<br>
-                    少しでも興味を持っていただけたら、ぜひ一度、無料体験にお越しください。<br>
-                    スタッフ一同、皆さんとお会いできるのを楽しみにしています！
-                </p>
-                <div class="cta-buttons">
-                    <a href="https://www.keeponlearning.fun/contact" class="cta-button primary">
-                        🎯 無料体験・お問い合わせはこちら
-                    </a>
-                    <a href="https://www.keeponlearning.fun/" class="cta-button secondary">
-                        📚 詳しい情報を見る
-                    </a>
-                </div>
-                <div class="access-info">
-                    <h3>エジソンアカデミー本校</h3>
-                    <p>〒581-0066</p>
-                    <p>大阪府八尾市北亀井町3丁目2-21 アーテック5階</p>
-                    <p class="tel">TEL: 090-8652-4333</p>
-                    <p style="margin-top: 20px;">
-                        <small>開校9年、約400名の生徒さんと共に歩んできました</small>
+        </section>
+        
+        <!-- なぜ「正解のない問い」が大切なのか？ -->
+        <section class="why-no-answer" id="why-no-answer">
+            <div class="container">
+                <h2 class="section-title fade-in">なぜ「正解のない問い」が<br class="sp-only">大切なのか？</h2>
+                <div class="why-intro fade-in delay-1">
+                    <h3>AI時代を生き抜くために、<br class="sp-only">本当に必要な力とは？</h3>
+                    <p>
+                        これからの社会は、予測不可能な変化に満ちています。
+                        知識を覚えるだけでは対応できない「正解のない問い」に直面する機会が増えるでしょう。
+                        そんな時代だからこそ、自ら問いを立て、考え抜き、行動する力が不可欠です。
                     </p>
                 </div>
+
+                <div class="why-grid">
+                    <div class="why-card fade-in delay-2">
+                        <div class="why-card-icon"><i class="fas fa-cogs"></i></div>
+                        <h4>思考の柔軟性を養う</h4>
+                        <p>
+                            一つの答えに固執せず、多様な視点から物事を捉え、最適解を模索する力を育てます。
+                            この柔軟な思考は、新しいアイデアを生み出す源泉となります。
+                        </p>
+                        <div class="example-box">
+                            <h5>例えばこんな問い</h5>
+                            <ul class="example-list">
+                                <li>「未来の街はどうなっていると思う？」</li>
+                                <li>「みんなが笑顔になるロボットってどんなの？」</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="why-card fade-in delay-3">
+                        <div class="why-card-icon"><i class="fas fa-comments"></i></div>
+                        <h4>対話と共感力を深める</h4>
+                        <p>
+                            他者の意見に耳を傾け、建設的な対話を通じて理解を深めるプロセスを重視します。
+                            これにより、共感力やコミュニケーション能力が向上します。
+                        </p>
+                         <div class="example-box">
+                            <h5>例えばこんな問い</h5>
+                            <ul class="example-list">
+                                <li>「この問題を解決するために、どんな方法があるかな？」</li>
+                                <li>「他の人のアイデアの良いところはどこだろう？」</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="why-card fade-in delay-4">
+                        <div class="why-card-icon"><i class="fas fa-bullseye"></i></div>
+                        <h4>主体性と実行力を培う</h4>
+                        <p>
+                            自ら目標を設定し、計画を立て、最後までやり遂げる力を育みます。
+                            この主体性は、将来どんな道に進んでも役立つ重要な資質です。
+                        </p
+                           <div class="example-box">
+                            <h5>例えばこんな問い</h5>
+                            <ul class="example-list">
+                                <li>「自分なら、このロボットにどんな機能を追加する？」</li>
+                                <li>「このアイデアを実現するために、まず何をすべき？」</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-concept fade-in">
+                    <h3>
+                        <span class="tooltip">
+                            オーナーシップ
+                            <span class="tooltip-icon">？</span>
+                            <span class="tooltip-content">物事を「自分ごと」として捉え、主体的に関わろうとする姿勢のこと。</span>
+                        </span>
+                        を育む
+                    </h3>
+                    <p class="key-concept-term">「自分で選んだ」から「やり抜ける」</p>
+                    <p>
+                        私たちは、子どもたちが自ら課題を選び、解決方法を考え、行動することを尊重します。
+                        この「オーナーシップ」の経験が、学びへの意欲と継続する力を育むと信じています。
+                    </p>
+                    <div class="ability-grid">
+                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-search"></i></div><span class="ability-name">探求力</span></div>
+                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-lightbulb"></i></div><span class="ability-name">発想力</span></div>
+                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-check-double"></i></div><span class="ability-name">実行力</span></div>
+                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-redo-alt"></i></div><span class="ability-name">継続力</span></div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- 他のスクールとの違い -->
+        <section class="difference" id="difference">
+            <div class="container">
+                <h2 class="section-title fade-in">他のスクールとの違いは？</h2>
+                <div class="comparison">
+                    <div class="comparison-item traditional fade-in delay-1">
+                        <h3>一般的なスクール</h3>
+                        <ul class="comparison-list">
+                            <li>先生が正解を教える</li>
+                            <li>カリキュラム通りに進む</li>
+                            <li>スキル習得が主な目的</li>
+                            <li>個々の進捗に差が出やすい</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-divider fade-in delay-2">VS</div>
+                    <div class="comparison-item keepon fade-in delay-3">
+                        <h3>キープオンスクール</h3>
+                        <ul class="comparison-list">
+                            <li>子ども自身が答えを発見</li>
+                            <li>興味関心に合わせて探求</li>
+                            <li>「考える力」の育成が目的</li>
+                            <li>一人ひとりのペースを尊重</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- こんなお子様・保護者様へ -->
+        <section class="target" id="target">
+            <div class="container">
+                 <div class="parent-question-container fade-in">
+                    <div class="parent-icon-wrapper">
+                        <span class="parent-face-icon">🤔</span> <!-- 悩んでいる顔の絵文字など -->
+                    </div>
+                    <div class="speech-bubble">
+                        <p>「うちの子に合うかしら…？」<br>「プログラミングって難しそう…」</p>
+                    </div>
+                </div>
+                <h2 class="section-title fade-in delay-1">ご安心ください！<br>キープオンはこんなお子様・保護者様に<br class="sp-only">ぴったりです</h2>
+                <div class="target-grid">
+                    <div class="target-item fade-in delay-2" style="--index: 0;">
+                        <div class="target-emoji">💡</div>
+                        <h4>好奇心旺盛なお子様</h4>
+                        <p class="target-text">「なぜ？どうして？」が多いお子様の探求心を刺激し、知的好奇心を育てます。</p>
+                    </div>
+                    <div class="target-item fade-in delay-3" style="--index: 1;">
+                        <div class="target-emoji">🛠️</div>
+                        <h4>ものづくりが好きなお子様</h4>
+                        <p class="target-text">ブロックや工作が好きなお子様なら、ロボット製作とプログラミングに夢中になるはず！</p>
+                    </div>
+                    <div class="target-item fade-in delay-4" style="--index: 2;">
+                        <div class="target-emoji">🚀</div>
+                        <h4>新しいことに挑戦したいお子様</h4>
+                        <p class="target-text">プログラミング未経験でも大丈夫！「やってみたい」気持ちを全力で応援します。</p>
+                    </div>
+                    <div class="target-item fade-in delay-2" style="--index: 3;">
+                        <div class="target-emoji">👨‍👩‍👧‍👦</div>
+                        <h4>子どもの主体性を伸ばしたい保護者様</h4>
+                        <p class="target-text">「やらされる学習」ではなく、子どもが自ら考えて行動する力を育みたい方に。</p>
+                    </div>
+                    <div class="target-item fade-in delay-3" style="--index: 4;">
+                        <div class="target-emoji">🤝</div>
+                        <h4>コミュニケーション能力も高めたい保護者様</h4>
+                        <p class="target-text">仲間との協働や発表を通じて、伝える力や協力する大切さを学んでほしい方に。</p>
+                    </div>
+                     <div class="target-item fade-in delay-4" style="--index: 5;">
+                        <div class="target-emoji">💖</div>
+                        <h4>安心して学べる環境を求める保護者様</h4>
+                        <p class="target-text">少人数制でアットホーム。一人ひとりに寄り添ったサポートをお約束します。</p>
+                    </div>
+                </div>
+                <div class="welcome-message fade-in">
+                    どんなお子様でも大歓迎！<br>
+                    キープオンスクールで、新しい「好き」と「得意」を見つけませんか？
+                </div>
+            </div>
+        </section>
+
+        <!-- CLAFTメソッド -->
+        <section class="claft" id="claft">
+            <div class="container">
+                <div class="claft-content">
+                    <div class="claft-badge fade-in">キープオン独自の教育メソッド</div>
+                    <h2 class="claft-title fade-in delay-1">CLAFT<span style="font-size: 0.5em; vertical-align: super;">®</span> メソッド</h2>
+                    <p class="claft-description fade-in delay-2">
+                        Create (創造し) → Learn (学び) → Apply (応用し) → Feedback (振り返り) → Try again (再挑戦する)。
+                        この5つのサイクルを通じて、子どもたちは自律的に学びを深め、本質的な理解と応用力を獲得します。
+                    </p>
+                    <div class="claft-features">
+                        <div class="claft-feature fade-in delay-3">
+                            <div class="claft-feature-icon"><i class="fas fa-pencil-ruler"></i></div>
+                            <h3 class="claft-feature-title">Create</h3>
+                            <p>自由な発想でアイデアを形に</p>
+                        </div>
+                        <div class="claft-feature fade-in delay-3">
+                            <div class="claft-feature-icon"><i class="fas fa-book-open"></i></div>
+                            <h3 class="claft-feature-title">Learn</h3>
+                            <p>試行錯誤から本質を学ぶ</p>
+                        </div>
+                        <div class="claft-feature fade-in delay-4">
+                            <div class="claft-feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+                            <h3 class="claft-feature-title">Apply</h3>
+                            <p>知識を応用し課題解決</p>
+                        </div>
+                        <div class="claft-feature fade-in delay-4">
+                            <div class="claft-feature-icon"><i class="fas fa-sync-alt"></i></div>
+                            <h3 class="claft-feature-title">Feedback</h3>
+                            <p>仲間や講師と振り返り</p>
+                        </div>
+                         <div class="claft-feature fade-in delay-4">
+                            <div class="claft-feature-icon"><i class="fas fa-arrow-up"></i></div>
+                            <h3 class="claft-feature-title">Try again</h3>
+                            <p>改善し再挑戦する力</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最終CTAセクション -->
+        <section class="final-cta" id="final-cta">
+            <div class="container">
+                <div class="final-cta-content">
+                    <h2 class="fade-in">さあ、キープオンで<br class="sp-only">未来への第一歩を踏み出そう！</h2>
+                    <p class="fade-in delay-1">
+                        無料体験レッスンで、キープオンスクールの楽しさを体感してください。<br>
+                        お子様の新たな可能性が、ここから始まります。
+                    </p>
+                    <div class="cta-buttons fade-in delay-2">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLScqAKJ3CgsLb-COaE_fqsUwVGKcoiab21a3f5KrLYEzDHNzVQ/viewform" target="_blank" rel="noopener noreferrer" class="cta-button primary">
+                            無料体験に申し込む <i class="fas fa-chalkboard-teacher icon"></i>
+                        </a>
+                        <a href="https://www.keeponlearning.fun/" target="_blank" rel="noopener noreferrer" class="cta-button secondary">
+                            もっと詳しく見る <i class="fas fa-info-circle icon"></i>
+                        </a>
+                    </div>
+
+                    <div class="access-info fade-in delay-3">
+                        <h3>アクセス・お問い合わせ</h3>
+                        <p>
+                            <strong>キープオンスクール [教室名]</strong><br>
+                            〒XXX-XXXX [ここに住所を記入]<br>
+                            [最寄駅]駅より徒歩X分
+                        </p>
+                        <p>
+                            営業時間: [例: 平日 15:00-19:00 / 土曜 10:00-18:00]<br>
+                            定休日: [例: 日曜・祝日]
+                        </p>
+                        <p class="tel">
+                            <a href="tel:09012345678"> <!-- 電話番号を設定 -->
+                                <i class="fas fa-phone-alt icon"></i>090-1234-5678
+                            </a>
+                        </p>
+                        <p>※体験授業の日時はご相談に応じます。お気軽にお問い合わせください。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- フッター -->
     <footer>
         <div class="footer-content">
-            <svg class="footer-logo" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet"> <!-- preserveAspectRatio追加 -->
-                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
-                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
-                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
-                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
-                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
-                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
-                <text x="100" y="220" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#2C1810">Keepon</text>
-            </svg>
+            <a href="#" class="footer-logo">キープオン<span>スクール</span></a>
             <div class="footer-links">
-                <a href="https://www.keeponlearning.fun/">ホームページ</a>
-                <a href="https://www.keeponlearning.fun/contact">お問い合わせ</a>
-                <a href="https://www.keeponlearning.fun/">詳細情報</a>
+                <a href="#hero">ホーム</a>
+                <a href="#concept">コンセプト</a>
+                <a href="#pillars">3つの柱</a>
+                <a href="#final-cta">無料体験</a>
+                <a href="https://www.keeponlearning.fun/privacy-policy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a>
             </div>
-            <p class="copyright">© 2025 キープオンスクール All Rights Reserved.</p>
+            <p class="copyright">© 2024 キープオンスクール. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
-        // ローディング画面の非表示
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('loader').classList.add('hidden');
-            }, 1000); // 実際の読み込み時間に応じて調整
-        });
-
-        // スクロールアニメーション (Intersection Observer)
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px' // 少し早めに反応させる
-        };
-
-        const observer = new IntersectionObserver(function(entries, obs) { // obs引数を追加
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    obs.unobserve(entry.target); // 一度表示されたら監視を解除
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // 修正: ヘッダーのスクロール表示/非表示
-        document.addEventListener('DOMContentLoaded', function() {
-            const header = document.getElementById('header');
-            if (!header) return;
-
-            let headerHeight = header.offsetHeight;
-            let lastScrollTop = 0;
-            const scrollThreshold = headerHeight > 0 ? headerHeight : 80; // ヘッダーの高さ、またはデフォルト値
-
-            window.addEventListener('load', () => { // 画像読み込み後に再度高さを取得
-                headerHeight = header.offsetHeight;
-            });
-
-            window.addEventListener('scroll', function() {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-                if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-                    // Scroll Down
-                    header.style.top = `-${headerHeight}px`;
-                } else { // Scroll Up or at the top
-                    header.style.top = "0";
-                }
-                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-            }, { passive: true });
-        });
-
-
-        // 3つの柱のトグル機能
-        function togglePillar(card) {
-            const isActive = card.classList.contains('active');
-            document.querySelectorAll('.pillar-card').forEach(c => {
-                c.classList.remove('active');
-            });
-            if (!isActive) {
-                card.classList.add('active');
+        document.addEventListener('DOMContentLoaded', function () {
+            // ローダー非表示
+            const loader = document.getElementById('loader');
+            if (loader) {
+                window.addEventListener('load', () => { // ページ全体の読み込み完了後
+                    loader.classList.add('hidden');
+                });
             }
-        }
 
-        // パララックス効果 (ヒーローセクションの図形アニメーション)
-        // この機能は元のコードにありましたが、コメントアウトされていたので、
-        // 有効にする場合は以下のコメントを解除してください。
-        /*
-        window.addEventListener('scroll', function() {
-            const scrolled = window.pageYOffset;
-            const shapes = document.querySelectorAll('.hero .shape'); // ヒーローセクション内のshapeに限定
-            
-            shapes.forEach((shape, index) => {
-                // speedを調整して、異なる動きを出す
-                let speedFactor = 0.2;
-                if (shape.classList.contains('shape1')) speedFactor = 0.3;
-                if (shape.classList.contains('shape2')) speedFactor = 0.15;
-                if (shape.classList.contains('shape3')) speedFactor = 0.25;
-                
-                // 既存のfloatアニメーションと組み合わせるため、translateYのみ更新
-                // shape.style.transform = `translateY(${scrolled * speedFactor}px)`;
-                // 注意: @keyframes float と競合する可能性があるため、どちらか一方、または組み合わせ方を工夫する必要あり
-            });
-        });
-        */
+            // ヘッダースクロールエフェクト
+            const header = document.getElementById('header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 50) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+            }
 
-
-        // スムーズスクロール
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                // href="#" の場合は何もしない
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
+            // Pillar Cardの展開
+            const pillarCards = document.querySelectorAll('.pillar-card');
+            pillarCards.forEach(card => {
+                const header = card.querySelector('.pillar-header');
+                if (header) {
+                    header.addEventListener('click', () => {
+                        // 他の開いているカードを閉じる (任意)
+                        // pillarCards.forEach(otherCard => {
+                        //     if (otherCard !== card && otherCard.classList.contains('active')) {
+                        //         otherCard.classList.remove('active');
+                        //     }
+                        // });
+                        card.classList.toggle('active');
                     });
                 }
             });
-        });
-        
 
-        // ボタンのリップルエフェクト
-        document.querySelectorAll('.cta-button, .cta-primary, .cta-header').forEach(button => {
-            button.addEventListener('click', function(e) {
-                // 既存のリップルがあれば削除
-                const existingRipple = this.querySelector('.ripple');
-                if (existingRipple) {
-                    existingRipple.remove();
-                }
+            // スクロールフェードインアニメーション
+            const fadeInElements = document.querySelectorAll('.fade-in');
+            if (fadeInElements.length > 0) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            // 一度表示されたら監視を停止 (任意)
+                            // observer.unobserve(entry.target); 
+                        }
+                    });
+                }, {
+                    threshold: 0.1 // 10%要素が見えたら発火
+                });
 
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple');
-                
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                
-                this.appendChild(ripple);
-                
-                // アニメーション終了後にリップル要素を削除
-                ripple.addEventListener('animationend', () => {
-                    ripple.remove();
+                fadeInElements.forEach(el => {
+                    observer.observe(el);
+                });
+            }
+
+            // スムーズスクロール (CSSのscroll-behavior: smoothと併用、または単独でより細かく制御する場合)
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const hrefAttribute = this.getAttribute('href');
+                    // 外部リンクや意味のない#の場合はデフォルト動作
+                    if (hrefAttribute === '#' || hrefAttribute.startsWith('#') === false || document.querySelector(hrefAttribute) === null) {
+                        return;
+                    }
+                    e.preventDefault();
+                    const targetElement = document.querySelector(hrefAttribute);
+                    if (targetElement) {
+                        const headerOffset = header ? header.offsetHeight : 0; // ヘッダーの高さを考慮
+                        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - headerOffset - 10; // 10pxの余白
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
                 });
             });
         });
-
-
-        // ページ読み込み時のアニメーション (Intersection Observerに統合)
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     document.querySelectorAll('.fade-in').forEach(el => {
-        //         const rect = el.getBoundingClientRect();
-        //         if (rect.top < window.innerHeight && rect.bottom >=0 ) { //画面内にある要素
-        //             // Intersection Observerが処理するので、ここでは不要
-        //         }
-        //     });
-        // });
-
-        // デバウンス関数 (scrollイベントの最適化などに使用)
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // 最適化されたスクロールイベントリスナーの例
-        const optimizedScrollHandler = debounce(function() {
-            // ここにスクロール時に頻繁に実行したくない処理を書く
-            // 例: スクロール位置に応じた特定要素のクラス変更など
-        }, 100); // 100msの間隔で発火を制限
-
-        window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
-
-
-        // アクセシビリティ: キーボードナビゲーションの視覚的フィードバック
-        function handleFirstTab(e) {
-            if (e.key === 'Tab') {
-                document.body.classList.add('keyboard-nav');
-                window.removeEventListener('keydown', handleFirstTab);
-            }
-        }
-        window.addEventListener('keydown', handleFirstTab);
-
-        document.addEventListener('mousedown', function() {
-            document.body.classList.remove('keyboard-nav');
-            window.addEventListener('keydown', handleFirstTab); // マウス操作後、再度Tabキー操作を検出
-        });
-
-        // コンソールメッセージ
-        console.log('%cキープオンスクール', 'color: #5DADE2; font-size: 24px; font-weight: bold;');
-        console.log('%c子どもたちの「できた！」を応援します', 'color: #52C41A; font-size: 16px;');
-        console.log('お問い合わせ: https://www.keeponlearning.fun/contact');
     </script>
-
-    <!-- リップルエフェクト用のスタイル -->
-    <style>
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(0);
-            animation: ripple-animation 0.6s ease-out;
-            pointer-events: none; /* クリックイベントを透過させる */
-        }
-
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* キーボードナビゲーション時のフォーカススタイル */
-        .keyboard-nav *:focus {
-            outline: 3px solid var(--primary-blue) !important; /* Importantで他のスタイルを上書き */
-            outline-offset: 2px !important;
-            box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.5) !important; /* より目立つように */
-        }
-        /* 特定の要素でフォーカスリングが不要な場合 */
-        .keyboard-nav .no-focus-ring:focus {
-            outline: none !important;
-            box-shadow: none !important;
-        }
-
-
-        /* プリント用スタイル */
-        @media print {
-            header,
-            .floating-shapes,
-            .loader,
-            .cta-group,
-            .cta-buttons,
-            .claft-badge,
-            .expand-icon,
-            .final-cta .access-info .tel /* 電話番号も印刷時には不要な場合 */
-             {
-                display: none !important;
-            }
-
-            body {
-                font-size: 12pt;
-                line-height: 1.4; /* 少し詰める */
-                color: #000000;
-                background: #FFFFFF;
-            }
-            section {
-                padding: 40px 0; /* プリント時のセクション間余白調整 */
-                page-break-inside: avoid; /* セクション途中で改ページされないように */
-            }
-            .section-title {
-                font-size: 1.5rem !important; /* プリント用に調整 */
-                page-break-after: avoid;
-            }
-            .hero {
-                min-height: auto;
-                padding-top: 20px;
-            }
-            a {
-                color: #000000;
-                text-decoration: none;
-            }
-            a[href]:after { /* URLを表示する場合 */
-                /* content: " (" attr(href) ")"; */
-                /* font-size: 0.8em; */
-            }
-            .highlight { /* ハイライトは背景色なしで下線などに変更 */
-                background: none;
-                border-bottom: 2px solid var(--primary-blue);
-                padding: 0;
-            }
-            .pillar-card, .comparison-item, .target-item, .claft-feature {
-                box-shadow: none !important;
-                border: 1px solid #ccc;
-            }
-            .parent-question-container, .speech-bubble {
-                background-color: #f0f0f0; /* 淡い背景色 */
-                color: #000000;
-                border: 1px solid #ccc;
-            }
-            .speech-bubble::before { /* しっぽは印刷時には不要な場合 */
-                display: none;
-            }
-
-        }
-
-        /* アクセシビリティ: アニメーションの無効化 */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                animation-delay: 0ms !important; /* animation-delayも無効化 */
-            }
-
-            .fade-in { /* アニメーションなしでも表示されるように */
-                opacity: 1;
-                transform: translateY(0);
-            }
-            .shape { /* floatアニメーション無効化 */
-                animation: none;
-            }
-            .loader-tree { /* pulseアニメーション無効化 */
-                 animation: none;
-            }
-            .target-emoji { /* bounceアニメーション無効化 */
-                animation: none;
-            }
-            /* 他の特定のアニメーションも必要に応じて無効化 */
-        }
-
-    </style>
 </body>
 </html>
