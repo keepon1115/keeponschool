@@ -1,1972 +1,479 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>キープオンスクール - ロボットプログラミングをきっかけに学びを広げる"居場所"</title>
-    <!-- Google Fonts: Noto Sans JP -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome CDN (for icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; /* Noto Sans JP を優先 */
-            line-height: 1.7; /* 微調整 */
-            color: #333;
-            overflow-x: hidden;
-            scroll-behavior: smooth; /* スムーズスクロールを有効化 */
-        }
-        
-        /* カラー変数 */
-        :root {
-            --primary-blue: #5DADE2;
-            --secondary-orange: #F39C12;
-            --accent-yellow: #F1C40F;
-            --accent-green: #52C41A;
-            --accent-pink: #FF6B6B;
-            --dark-brown: #3A2E2A; /* 少し調整 */
-            --light-bg: #F8F9FA;
-            --white: #FFFFFF;
-            --header-height: 80px; /* ヘッダーの高さを定義 */
-        }
-        
-        /* ローディングアニメーション */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease; /* visibilityも追加 */
-        }
-        
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden; /* opacityだけでなくvisibilityも変更 */
-            pointer-events: none;
-        }
-        
-        .loader-content {
-            text-align: center;
-        }
-        
-        /* CSSローダーに変更 (SVGの代わりに) */
-        .loader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(0,0,0,0.1);
-            border-top-color: var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .loader-text {
-            font-size: 1.2rem;
-            color: var(--dark-brown);
-            font-weight: 500;
-        }
-        
-        /* ヘッダー */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9); /* 少し透明度調整 */
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* 初期は控えめに */
-            z-index: 1000;
-            padding: 20px 0; /* 初期パディング */
-            transition: top 0.3s ease-in-out, padding 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        /* スクロール時のヘッダースタイル */
-        header.scrolled {
-            padding: 15px 0;
-            background: rgba(255, 255, 255, 0.98); /* 不透明度を上げる */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* 影を濃く */
-        }
-        
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo-link { /* ロゴをリンクに */
-            text-decoration: none;
-        }
-        .logo {
-            /* SVGの代わりにテキストロゴ */
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--dark-brown);
-            /* width: 150px; */ /* 不要に */
-            /* height: auto; */ /* 不要に */
-            cursor: pointer;
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-        .logo span {
-            color: var(--primary-blue);
-        }
-        
-        .logo:hover {
-            transform: scale(1.05);
-            color: var(--primary-blue);
-        }
-        
-        .cta-header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
-            color: white;
-            padding: 10px 25px; /* 少し調整 */
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 15px; /* 少し調整 */
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(93, 173, 226, 0.2); /* 影調整 */
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cta-header:before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2); /* 透明度調整 */
-            transform: translate(-50%, -50%) scale(0); /* scaleでアニメーション */
-            transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1), height 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        
-        .cta-header:hover:before {
-            width: 250px; /* 調整 */
-            height: 250px; /* 調整 */
-            transform: translate(-50%, -50%) scale(1);
-        }
-        
-        .cta-header:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(93, 173, 226, 0.3); /* 影調整 */
-        }
-        
-        /* ヒーローセクション */
-        .hero {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #EBF5FB 0%, #FEF9E7 100%); /* 背景色微調整 */
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            padding-top: var(--header-height); /* ヘッダーの高さ分パディング */
-        }
-        
-        .hero-container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 40px 20px; /* パディング追加 */
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-content {
-            max-width: 700px;
-        }
-        
-        .hero-title {
-            font-size: clamp(2.8rem, 6vw, 4.2rem); /* サイズ微調整 */
-            font-weight: 900;
-            color: var(--dark-brown);
-            margin-bottom: 25px; /* 微調整 */
-            line-height: 1.25; /* 微調整 */
-            position: relative;
-        }
-        
-        .hero-title span {
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            padding-bottom: 5px; /* 下線とのスペース */
-        }
-        
-        .hero-subtitle {
-            font-size: clamp(1.3rem, 3vw, 1.9rem); /* サイズ微調整 */
-            color: var(--dark-brown);
-            opacity: 0.9; /* 微調整 */
-            margin-bottom: 35px; /* 微調整 */
-            font-weight: 500;
-        }
-        
-        .hero-description {
-            font-size: 1.15rem; /* 微調整 */
-            color: #555; /* 微調整 */
-            margin-bottom: 45px; /* 微調整 */
-            line-height: 1.8;
-        }
-        
-        .cta-group {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .cta-primary {
-            background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
-            color: white;
-            padding: 16px 35px; /* パディング調整 */
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem; /* サイズ調整 */
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(243, 156, 18, 0.25); /* 影調整 */
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-primary .icon { /* アイコン用のスペース */
-            margin-left: 8px;
-        }
-        
-        .cta-primary:hover {
-            transform: translateY(-3px) scale(1.02); /* スケール追加 */
-            box-shadow: 0 8px 30px rgba(243, 156, 18, 0.35); /* 影調整 */
-        }
-        
-        /* アニメーション要素 */
-        .floating-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 1; /* hero-contentより下 */
-        }
-        
-        .shape {
-            position: absolute;
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* blob形状 */
-            animation: float 25s infinite ease-in-out, morph 10s infinite ease-in-out alternate; /* morph追加 */
-            opacity: 0.08; /* 透明度調整 */
-        }
-        
-        .shape1 {
-            width: 350px; height: 350px; /* サイズ調整 */
-            background: var(--primary-blue);
-            top: 5%; right: -180px; /* 位置調整 */
-            animation-delay: 0s, 0s;
-        }
-        
-        .shape2 {
-            width: 250px; height: 250px; /* サイズ調整 */
-            background: var(--accent-yellow);
-            bottom: 15%; left: -120px; /* 位置調整 */
-            animation-delay: 4s, 1s;
-        }
-        
-        .shape3 {
-            width: 180px; height: 180px; /* サイズ調整 */
-            background: var(--accent-green);
-            top: 45%; right: 8%; /* 位置調整 */
-            animation-delay: 8s, 2s;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-            33% { transform: translateY(-35px) rotate(60deg) scale(1.05); }
-            66% { transform: translateY(20px) rotate(-40deg) scale(0.95); }
-        }
-        @keyframes morph { /* blob形状変化 */
-            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
-            50% { border-radius: 60% 40% 30% 70% / 70% 50% 50% 30%; }
-        }
-        
-        /* セクション共通 */
-        section {
-            padding: 100px 0; /* 上下パディング統一 */
-            position: relative;
-            overflow: hidden; /* 内部要素のはみ出し防止 */
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .section-title {
-            font-size: clamp(2.2rem, 5vw, 3.2rem); /* サイズ調整 */
-            text-align: center;
-            color: var(--dark-brown);
-            margin-bottom: 60px; /* マージン調整 */
-            position: relative;
-            font-weight: 700; /* 太さ調整 */
-        }
-        
-        .section-title:after {
-            content: '';
-            width: 80px; /* 長さ調整 */
-            height: 5px; /* 太さ調整 */
-            background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
-            position: absolute;
-            bottom: -20px; /* 位置調整 */
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 3px; /* 角丸調整 */
-        }
-        
-        /* 悩みセクション */
-        .problems {
-            background: white;
-        }
-                
-        .problem-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* minmax調整 */
-            gap: 35px; /* gap調整 */
-            /* margin-top: 50px; */ /* section-titleのマージンでカバー */
-        }
-        
-        .problem-item {
-            background: var(--light-bg);
-            padding: 35px; /* パディング調整 */
-            border-radius: 15px; /* 角丸調整 */
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); /* 影調整 */
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* イージング変更 */
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .problem-item:hover {
-            transform: translateY(-8px) scale(1.02); /* スケール追加 */
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* 影調整 */
-        }
-        
-        .problem-item:before { /* チェックマークではなく、デザイン的なアクセントに */
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 100px;
-            height: 100px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        
-        .problem-item:hover:before {
-            opacity: 0.1;
-            transform: scale(1);
-        }
-        
-        .problem-icon {
-            font-size: 2.5rem; /* サイズ調整 */
-            margin-bottom: 20px; /* マージン調整 */
-            color: var(--primary-blue); /* 色付け */
-            display: inline-block; /* アニメーションのため */
-            transition: transform 0.3s ease;
-        }
-        .problem-item:hover .problem-icon {
-            transform: rotateY(180deg); /* ホバー時アイコン回転 */
-        }
-        
-        .problem-text {
-            font-size: 1.05rem; /* サイズ調整 */
-            color: #555; /* 色調整 */
-            line-height: 1.7; /* 行間調整 */
-        }
-        
-        /* コンセプトセクション */
-        .concept {
-            background: linear-gradient(135deg, #FEF9E7 0%, #EAF2F8 100%); /* 背景調整 */
-        }
-        
-        .concept-content {
-            display: grid;
-            grid-template-columns: 1fr 1.1fr; /* 比率調整 */
-            gap: 50px; /* gap調整 */
-            align-items: center;
-            /* margin-top: 50px; */
-        }
-        
-        .concept-text h3 {
-            font-size: 2.2rem; /* サイズ調整 */
-            color: var(--dark-brown);
-            margin-bottom: 25px; /* マージン調整 */
-            font-weight: 700;
-        }
-        
-        .concept-text p {
-            font-size: 1.1rem; /* サイズ調整 */
-            color: #555;
-            line-height: 1.8;
-            margin-bottom: 25px;
-        }
-        
-        .highlight {
-            background: linear-gradient(to top, rgba(93, 173, 226, 0.25) 50%, transparent 50%); /* グラデーション方向変更 */
-            padding: 0px 5px; /* パディング調整 */
-            border-radius: 4px;
-            font-weight: 500; /* 少し太く */
-        }
-        
-        .concept-image {
-            position: relative;
-            text-align: center;
-        }
-        
-        .concept-image-placeholder { /* 実際の画像がないのでデザインでカバー */
-            width: 100%;
-            aspect-ratio: 4 / 3; /* 比率指定 */
-            /* height: 400px; */
-            background: url('https://images.unsplash.com/photo-1517077304055-6e89abbf0920?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y2hpbGRyZW4lMjBsZWFybmluZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60') center/cover no-repeat;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 15px 50px rgba(93, 173, 226, 0.25); /* 影調整 */
-        }
-        
-        .concept-image-placeholder:before { /* シャインエフェクトは維持 */
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* 透明度調整 */
-            transform: rotate(45deg);
-            animation: shine 3.5s infinite linear; /* イージング変更 */
-        }
-        
-        @keyframes shine { /* アニメーション調整 */
-            0% { transform: translateX(-150%) translateY(-150%) rotate(45deg); }
-            100% { transform: translateX(150%) translateY(150%) rotate(45deg); }
-        }
-        
-        /* 3つの柱セクション */
-        .pillars {
-            background: white;
-        }
-        
-        .pillars-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* minmax調整 */
-            gap: 35px; /* gap調整 */
-            /* margin-top: 60px; */
-        }
-        
-        .pillar-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 12px 45px rgba(0, 0, 0, 0.08); /* 影調整 */
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .pillar-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12); /* 影調整 */
-        }
-        
-        .pillar-header {
-            padding: 35px 30px; /* パディング調整 */
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .pillar-header1 { background: linear-gradient(135deg, var(--primary-blue), #3498DB); }
-        .pillar-header2 { background: linear-gradient(135deg, var(--accent-yellow), var(--secondary-orange)); }
-        .pillar-header3 { background: linear-gradient(135deg, var(--accent-green), #27AE60); }
-        
-        .pillar-number {
-            position: absolute;
-            top: 15px; right: 25px; /* 位置調整 */
-            font-size: 3.5rem; /* サイズ調整 */
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.15); /* 透明度調整 */
-            line-height: 1; /* 行間調整 */
-        }
-        
-        .pillar-icon {
-            font-size: 2.8rem; /* サイズ調整 */
-            margin-bottom: 15px;
-            color: white; /* アイコンも白に */
-        }
-        
-        .pillar-title {
-            color: white;
-            font-size: 1.6rem; /* サイズ調整 */
-            font-weight: 700; /* 太さ調整 */
-            margin-bottom: 8px; /* マージン調整 */
-            position: relative;
-            z-index: 1;
-        }
-        
-        .pillar-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .pillar-content {
-            padding: 0 30px; /* 初期パディング調整 */
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), padding 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* paddingもアニメーション */
-        }
-        
-        .pillar-card.active .pillar-content {
-            max-height: 500px; /* 十分な高さを確保 */
-            padding: 30px 30px; /* 開いた時のパディング */
-        }
-        
-        .pillar-content h4 {
-            color: var(--dark-brown);
-            margin-bottom: 15px;
-            font-size: 1.25rem; /* サイズ調整 */
-            font-weight: 700;
-        }
-        
-        .pillar-content p {
-            color: #555;
-            line-height: 1.8;
-            margin-bottom: 15px;
-            font-size: 0.95rem; /* サイズ調整 */
-        }
-        
-        .pillar-point {
-            background: var(--light-bg);
-            padding: 15px 20px; /* パディング調整 */
-            border-radius: 10px;
-            margin-top: 20px;
-            border-left: 5px solid; /* 太さ調整 */
-        }
-        
-        .pillar-card:nth-child(1) .pillar-point { border-left-color: var(--primary-blue); }
-        .pillar-card:nth-child(2) .pillar-point { border-left-color: var(--accent-yellow); }
-        .pillar-card:nth-child(3) .pillar-point { border-left-color: var(--accent-green); }
-        
-        .expand-icon {
-            position: absolute;
-            bottom: 15px; /* 位置調整 */
-            right: 20px; /* 位置調整 */
-            width: 36px; /* サイズ調整 */
-            height: 36px; /* サイズ調整 */
-            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.3rem; /* アイコンサイズ調整 */
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* イージング変更 */
-        }
-        
-        .pillar-card.active .expand-icon {
-            transform: rotate(135deg); /* 回転角度変更 */
-        }
-        
-        /* なぜ正解のない問いが大切なのか？セクション */
-        .why-no-answer {
-            background: linear-gradient(135deg, #F4F6F7 0%, #EAF2F8 100%); /* 背景調整 */
-        }
-
-        .why-intro {
-            max-width: 850px; /* 幅調整 */
-            margin: 0 auto 60px;
-            text-align: center;
-        }
-
-        .why-intro h3 {
-            font-size: 1.9rem; /* サイズ調整 */
-            color: var(--dark-brown);
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .why-intro p {
-            font-size: 1.1rem;
-            color: #555;
-            line-height: 1.8;
-        }
-
-        .why-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* minmax調整 */
-            gap: 35px; /* gap調整 */
-            margin-bottom: 60px;
-        }
-
-        .why-card {
-            background: white;
-            padding: 35px 30px; /* パディング調整 */
-            border-radius: 15px; /* 角丸調整 */
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* 影調整 */
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .why-card:hover {
-            transform: translateY(-8px) scale(1.01); /* スケール追加 */
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12); /* 影調整 */
-        }
-
-        .why-card-icon {
-            width: 70px; /* サイズ調整 */
-            height: 70px; /* サイズ調整 */
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem; /* アイコンサイズ調整 */
-            color: white; /* アイコン色 */
-            margin-bottom: 25px; /* マージン調整 */
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* アイコンにも影 */
-        }
-
-        .why-card:nth-child(2) .why-card-icon { background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow)); }
-        .why-card:nth-child(3) .why-card-icon { background: linear-gradient(135deg, var(--accent-pink), #E74C3C); }
-
-        .why-card h4 {
-            font-size: 1.45rem; /* サイズ調整 */
-            color: var(--dark-brown);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .why-card p {
-            color: #555;
-            line-height: 1.8;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
-
-        .example-box {
-            background: var(--light-bg);
-            padding: 20px;
-            border-radius: 10px; /* 角丸調整 */
-            border-left: 5px solid var(--primary-blue); /* 太さ調整 */
-        }
-
-        .example-box h5 {
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            font-size: 1.05rem; /* サイズ調整 */
-            font-weight: 700;
-        }
-
-        .example-list {
-            list-style: none;
-        }
-
-        .example-list li {
-            padding: 8px 0;
-            padding-left: 28px; /* パディング調整 */
-            position: relative;
-            color: #555;
-            font-size: 0.9rem; /* サイズ調整 */
-            line-height: 1.6;
-        }
-
-        .example-list li:before {
-            content: '\f0eb'; /* Font Awesome電球アイコン */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            position: absolute;
-            left: 0;
-            top: 9px; /* 位置調整 */
-            color: var(--accent-yellow); /* アイコン色 */
-        }
-
-        .key-concept {
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
-            color: white;
-            padding: 50px 40px; /* パディング調整 */
-            border-radius: 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            margin-top: 60px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* 影 */
-        }
-
-        .key-concept h3 {
-            font-size: 2.2rem; /* サイズ調整 */
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        .key-concept-term {
-            font-size: 1.6rem; /* サイズ調整 */
-            font-weight: 900;
-            margin-bottom: 15px; /* マージン調整 */
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: help;
-        }
-
-        .tooltip-icon {
-            display: inline-flex; /* flexに変更 */
-            align-items: center; /* 中央揃え */
-            justify-content: center; /* 中央揃え */
-            width: 22px; /* サイズ調整 */
-            height: 22px; /* サイズ調整 */
-            background: rgba(255, 255, 255, 0.25); /* 背景調整 */
-            border-radius: 50%;
-            font-size: 11px; /* サイズ調整 */
-            margin-left: 8px; /* マージン調整 */
-            vertical-align: middle; /* 垂直位置調整 */
-            font-weight: normal;
-            transition: background-color 0.3s ease;
-        }
-        .tooltip:hover .tooltip-icon {
-            background-color: rgba(255,255,255,0.4);
-        }
-
-        .tooltip-content {
-            position: absolute;
-            bottom: calc(100% + 10px); /* 吹き出し位置調整 */
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(40, 40, 40, 0.95); /* 背景調整 */
-            color: white;
-            padding: 12px 18px; /* パディング調整 */
-            border-radius: 8px;
-            font-size: 0.9rem;
-            line-height: 1.5; /* 行間調整 */
-            width: 280px; /* 幅調整 */
-            opacity: 0;
-            visibility: hidden; /* visibility追加 */
-            pointer-events: none;
-            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; /* transformも */
-            z-index: 10;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transform: translateX(-50%) translateY(10px); /* 初期位置を少し下に */
-        }
-
-        .tooltip-content:after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 8px solid transparent;
-            border-top-color: rgba(40, 40, 40, 0.95); /* 背景色に合わせる */
-        }
-
-        .tooltip:hover .tooltip-content {
-            opacity: 1;
-            visibility: visible; /* 表示 */
-            transform: translateX(-50%) translateY(0); /* 上に移動 */
-        }
-
-        .key-concept p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            opacity: 0.95;
-            max-width: 700px; /* 幅調整 */
-            margin: 0 auto;
-        }
-
-        .ability-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* minmax調整 */
-            gap: 15px; /* gap調整 */
-            margin-top: 35px; /* マージン調整 */
-            max-width: 700px; /* 幅調整 */
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .ability-item {
-            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
-            padding: 20px 15px; /* パディング調整 */
-            border-radius: 12px; /* 角丸調整 */
-            text-align: center;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.2); /* ボーダー追加 */
-        }
-
-        .ability-item:hover {
-            background: rgba(255, 255, 255, 0.25); /* 背景調整 */
-            transform: translateY(-5px) scale(1.05); /* Y方向移動追加 */
-        }
-
-        .ability-icon {
-            font-size: 2.2rem; /* サイズ調整 */
-            margin-bottom: 8px; /* マージン調整 */
-            color: white; /* アイコン色 */
-        }
-
-        .ability-name {
-            font-size: 0.9rem;
-            font-weight: 500; /* 太さ調整 */
-        }
-
-        /* 差別化セクション */
-        .difference {
-            background: linear-gradient(135deg, #EAF2F8 0%, #FEF9E7 100%); /* 背景調整 */
-        }
-        
-        .comparison {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 30px; /* gap調整 */
-            align-items: stretch; /* 高さを揃える */
-            margin-top: 60px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .comparison-item {
-            background: white;
-            padding: 35px; /* パディング調整 */
-            border-radius: 15px; /* 角丸調整 */
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-            display: flex; /* flexboxで内部要素を制御 */
-            flex-direction: column; /* 縦並び */
-        }
-        
-        .comparison-item.traditional {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* 影調整 */
-        }
-        
-        .comparison-item.keepon {
-            box-shadow: 0 12px 45px rgba(93, 173, 226, 0.25); /* 影調整 */
-            transform: scale(1.03); /* 少し控えめに */
-            border: 2px solid var(--primary-blue); /* 太さ調整 */
-        }
-        
-        .comparison-item h3 {
-            font-size: 1.6rem; /* サイズ調整 */
-            margin-bottom: 25px; /* マージン調整 */
-            color: var(--dark-brown);
-            font-weight: 700;
-        }
-        
-        .comparison-item.keepon h3 {
-            color: var(--primary-blue);
-        }
-        
-        .comparison-list {
-            list-style: none;
-            text-align: left;
-            margin-top: auto; /* リストを下に配置 */
-        }
-        
-        .comparison-list li {
-            padding: 12px 0; /* パディング調整 */
-            padding-left: 35px; /* パディング調整 */
-            position: relative;
-            color: #555;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        
-        .comparison-list li:before {
-            /* content: '✗'; */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            content: '\f00d'; /* Font Awesome バツ印 */
-            position: absolute;
-            left: 5px; /* 位置調整 */
-            top: 13px; /* 位置調整 */
-            color: #E74C3C;
-            font-size: 1.1rem; /* アイコンサイズ調整 */
-        }
-        
-        .keepon .comparison-list li:before {
-            /* content: '✓'; */
-            content: '\f00c'; /* Font Awesome チェックマーク */
-            color: var(--accent-green);
-        }
-        
-        .comparison-divider {
-            width: auto;
-            min-width: 70px; /* サイズ調整 */
-            height: 50px; /* サイズ調整 */
-            background: white;
-            border-radius: 10px;
-            padding: 0 15px; /* パディング調整 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1rem; /* サイズ調整 */
-            color: var(--dark-brown);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* 影調整 */
-            position: relative;
-            z-index: 1;
-            border: 1px solid #eee; /* ボーダー調整 */
-            align-self: center; /* 中央に配置 */
-        }
-
-        /* ターゲットセクション */
-        .target {
-            background: white;
-        }
-        
-        .parent-question-container {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px; /* gap調整 */
-            margin-bottom: 40px; /* マージン調整 */
-            justify-content: center;
-            padding: 0 20px;
-            max-width: 750px; /* 幅調整 */
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .parent-icon-wrapper {
-            flex-shrink: 0;
-            padding-top: 8px; /* 位置調整 */
-        }
-
-        .parent-face-icon {
-            font-size: 3rem; /* サイズ調整 */
-            display: inline-block;
-            line-height: 1;
-            color: var(--secondary-orange); /* 色付け */
-        }
-
-        .speech-bubble {
-            position: relative;
-            background-color: var(--primary-blue);
-            color: white;
-            padding: 18px 25px; /* パディング調整 */
-            border-radius: 15px; /* 角丸調整 */
-            max-width: 500px; /* 幅調整 */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* 影調整 */
-            flex-grow: 1;
-        }
-
-        .speech-bubble p {
-            font-size: clamp(1.05rem, 2.2vw, 1.2rem); /* サイズ調整 */
-            font-weight: 500; /* 太さ調整 */
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .speech-bubble::before {
-            content: "";
-            position: absolute;
-            top: 20px; /* 位置調整 */
-            left: -12px; /* 位置調整 */
-            width: 0;
-            height: 0;
-            border-top: 12px solid transparent; /* サイズ調整 */
-            border-bottom: 12px solid transparent; /* サイズ調整 */
-            border-right: 12px solid var(--primary-blue); /* サイズ調整 */
-        }
-        
-        .target .section-title {
-             margin-top: 1em;
-        }
-        .target .section-title:after {
-            bottom: -20px;
-        }
-
-        .target-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* minmax調整 */
-            gap: 30px;
-            margin-top: 60px;
-        }
-        
-        .target-item {
-            text-align: center;
-            padding: 35px 30px; /* パディング調整 */
-            border-radius: 15px; /* 角丸調整 */
-            background: var(--light-bg);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: default; /* pointerから変更 */
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.05); /* 初期影 */
-        }
-        
-        .target-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); /* 影調整 */
-        }
-        
-        .target-item:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px; /* 太さ調整 */
-            background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
-            transform: scaleX(0);
-            transform-origin: left; /* 左から広がる */
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        
-        .target-item:hover:before {
-            transform: scaleX(1);
-        }
-        
-        .target-emoji {
-            font-size: 2.8rem; /* サイズ調整 */
-            margin-bottom: 20px; /* マージン調整 */
-            display: inline-block;
-            animation: bounce 2.5s infinite ease-in-out; /* イージング調整 */
-            animation-delay: calc(var(--index) * 0.15s); /* 遅延調整 */
-        }
-        
-        @keyframes bounce { /* アニメーション微調整 */
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(0deg); }
-            40% { transform: translateY(-12px) rotate(-5deg); }
-            60% { transform: translateY(-6px) rotate(3deg); }
-        }
-        
-        .target-text {
-            font-size: 1rem;
-            color: #555;
-            line-height: 1.7; /* 行間調整 */
-        }
-        
-        .welcome-message {
-            text-align: center;
-            margin-top: 50px; /* マージン調整 */
-            padding: 35px; /* パディング調整 */
-            background: linear-gradient(135deg, rgba(93, 173, 226, 0.08), rgba(82, 196, 26, 0.08)); /* 透明度調整 */
-            border-radius: 15px; /* 角丸調整 */
-            font-size: 1.25rem; /* サイズ調整 */
-            color: var(--dark-brown);
-            font-weight: 500;
-            border: 1px solid rgba(0,0,0,0.05); /* 薄いボーダー */
-        }
-        
-        /* CLAFTセクション */
-        .claft {
-            background: linear-gradient(135deg, #2C3E50, #3498DB);
-            color: white;
-        }
-        
-        .claft:before { /* SVGパターンの代わりにCSSグラデーション */
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image:
-                radial-gradient(circle at 10px 10px, rgba(255,255,255,0.05) 1px, transparent 0),
-                radial-gradient(circle at 60px 60px, rgba(255,255,255,0.05) 1px, transparent 0);
-            background-size: 100px 100px;
-            opacity: 0.5;
-            animation: slideBackground 20s linear infinite;
-        }
-        
-        @keyframes slideBackground {
-            0% { background-position: 0 0; }
-            100% { background-position: 200px 200px; }
-        }
-        
-        .claft-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
-        
-        .claft-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
-            padding: 12px 35px; /* パディング調整 */
-            border-radius: 50px;
-            margin-bottom: 25px; /* マージン調整 */
-            font-weight: 700; /* 太さ調整 */
-            backdrop-filter: blur(8px); /* blur調整 */
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .claft-title {
-            font-size: clamp(2.5rem, 5.5vw, 3.5rem); /* サイズ調整 */
-            margin-bottom: 25px; /* マージン調整 */
-            font-weight: 900;
-        }
-        
-        .claft-description {
-            font-size: 1.25rem; /* サイズ調整 */
-            max-width: 850px; /* 幅調整 */
-            margin: 0 auto 45px; /* マージン調整 */
-            line-height: 1.8;
-            opacity: 0.9;
-        }
-        
-        .claft-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* minmax調整 */
-            gap: 30px;
-            margin-top: 40px;
-            max-width: 900px; /* 幅調整 */
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .claft-feature {
-            background: rgba(255, 255, 255, 0.08); /* 背景調整 */
-            padding: 35px 30px; /* パディング調整 */
-            border-radius: 15px; /* 角丸調整 */
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.15); /* ボーダー調整 */
-            transition: all 0.3s ease;
-        }
-        
-        .claft-feature:hover {
-            background: rgba(255, 255, 255, 0.15); /* 背景調整 */
-            transform: translateY(-8px) scale(1.02); /* スケール追加 */
-        }
-        
-        .claft-feature-icon {
-            font-size: 2.5rem; /* サイズ調整 */
-            margin-bottom: 20px; /* マージン調整 */
-            color: var(--accent-yellow); /* アイコン色 */
-        }
-        
-        .claft-feature-title {
-            font-size: 1.3rem; /* サイズ調整 */
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        .claft-feature p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            line-height: 1.7;
-        }
-        
-        /* 最終CTAセクション */
-        .final-cta {
-            background: linear-gradient(135deg, #FEF9E7 0%, #EBF5FB 100%); /* 背景調整 */
-            text-align: center;
-        }
-        
-        .final-cta-content h2 {
-            font-size: clamp(2.2rem, 5vw, 2.8rem); /* サイズ調整 */
-            color: var(--dark-brown);
-            margin-bottom: 25px; /* マージン調整 */
-            font-weight: 700;
-        }
-        
-        .final-cta-content p {
-            font-size: 1.2rem;
-            color: #555;
-            max-width: 700px; /* 幅調整 */
-            margin: 0 auto 45px; /* マージン調整 */
-            line-height: 1.8;
-        }
-        
-        .cta-buttons { /* ヒーローセクションの .cta-group と共通化も検討 */
-            display: flex;
-            gap: 25px; /* gap調整 */
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .cta-button {
-            padding: 18px 45px; /* パディング調整 */
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem; /* サイズ調整 */
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid transparent; /* ホバー用 */
-        }
-        .cta-button .icon {
-            margin-left: 10px;
-        }
-        
-        .cta-button.primary {
-            background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
-            color: white;
-            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.25); /* 影調整 */
-        }
-        
-        .cta-button.secondary {
-            background: white;
-            color: var(--primary-blue);
-            border: 2px solid var(--primary-blue);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); /* 影追加 */
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-3px) scale(1.03); /* スケール追加 */
-        }
-        .cta-button.primary:hover {
-            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.35); /* 影調整 */
-        }
-        .cta-button.secondary:hover {
-            background: var(--primary-blue);
-            color: white;
-            box-shadow: 0 10px 30px rgba(93, 173, 226, 0.25); /* 影調整 */
-        }
-        
-        /* アクセス情報 */
-        .access-info {
-            margin-top: 60px;
-            padding: 40px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* 影調整 */
-            max-width: 700px; /* 幅調整 */
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .access-info h3 {
-            color: var(--dark-brown);
-            margin-bottom: 25px; /* マージン調整 */
-            font-size: 1.6rem; /* サイズ調整 */
-            font-weight: 700;
-        }
-        
-        .access-info p {
-            color: #555;
-            line-height: 1.8;
-            margin-bottom: 15px; /* マージン調整 */
-            font-size: 1rem;
-        }
-        .access-info p strong {
-            color: var(--dark-brown);
-            font-weight: 700;
-        }
-        
-        .access-info .tel a { /* 電話番号をリンクに */
-            font-size: 1.6rem; /* サイズ調整 */
-            color: var(--primary-blue);
-            font-weight: bold;
-            margin-top: 25px; /* マージン調整 */
-            text-decoration: none;
-            display: inline-block; /* ホバーエフェクトのため */
-            transition: color 0.3s ease;
-        }
-        .access-info .tel a:hover {
-            color: var(--accent-green);
-        }
-        .access-info .tel .icon {
-            margin-right: 8px;
-        }
-        
-        /* フッター */
-        footer {
-            background: var(--dark-brown);
-            color: rgba(255,255,255,0.8); /* 文字色調整 */
-            padding: 50px 0 30px; /* パディング調整 */
-            text-align: center;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .footer-logo {
-            /* width: 120px; */ /* テキストロゴなので不要 */
-            font-size: 1.5rem; /* フッター用ロゴサイズ */
-            font-weight: 900;
-            color: white;
-            text-decoration: none;
-            margin-bottom: 25px; /* マージン調整 */
-            display: inline-block;
-            /* filter: brightness(0) invert(1); */ /* テキストロゴなので不要 */
-        }
-        .footer-logo span { color: var(--primary-blue); } /* メインロゴと同じスタイル */
-        
-        .footer-links {
-            display: flex;
-            gap: 25px; /* gap調整 */
-            justify-content: center;
-            margin-bottom: 25px; /* マージン調整 */
-            flex-wrap: wrap;
-        }
-        
-        .footer-links a {
-            color: rgba(255,255,255,0.7); /* 透明度調整 */
-            text-decoration: none;
-            transition: color 0.3s ease, opacity 0.3s ease; /* colorも */
-            font-size: 0.9rem;
-        }
-        
-        .footer-links a:hover {
-            color: white; /* ホバー時色変更 */
-            opacity: 1;
-        }
-        
-        .copyright {
-            opacity: 0.6;
-            font-size: 0.85rem; /* サイズ調整 */
-            margin-top: 20px; /* 上とのスペース */
-        }
-        
-        /* レスポンシブ */
-        @media (max-width: 992px) { /* タブレット向け調整 */
-            .concept-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center; /* 中央寄せ */
+        // チャットデータ (元のJavaScriptのchatDataをここにコピーしてください)
+        const chatData = {
+            initial: {
+                bot: "こんにちは！キープオンスクールの案内役、センサーです。\n\n私たちのスクールに興味を持っていただき、ありがとうございます！\n\nキープオンについて、どんなことが知りたいですか？",
+                questions: [
+                    { id: 'about', text: 'どんなスクールなの？' },
+                    { id: 'enjoy', text: 'うちの子でも楽しめる？' },
+                    { id: 'beginner', text: 'プログラミング未経験でも大丈夫？' },
+                    { id: 'skills', text: 'どんな力が身につくの？' }
+                ]
+            },
+            about: {
+                user: "どんなスクールなの？",
+                bot: "キープオンは、ただプログラミングを教えるだけのスクールではありません。\n\n私たちの最大の特徴は「正解のない問いを楽しむ」ことです。\n\n社会には正解がひとつではない場面がたくさんありますよね。そんな時に、自分で考えて、自分で選択して、自分で行動できる「自律型人材」を育てることが私たちの目標です。\n\nロボット製作やプログラミングを通じて、身近なもの（信号機や自動ドアなど）の仕組みを学び、そこに自分のアイデアを加えて、オリジナルの作品を作っていきます。",
+                questions: [
+                    { id: 'different', text: '他のスクールとの違いは？' },
+                    { id: 'age', text: '対象年齢は？' },
+                    { id: 'cost', text: '費用について教えて' },
+                    { id: 'trial', text: '体験はできる？' }
+                ]
+            },
+            enjoy: {
+                user: "うちの子でも楽しめる？",
+                bot: "もちろん楽しめます！\n\nキープオンでは、ブロック、パズル、ゲーム、ロボットなど、わくわくするカリキュラムをご用意しています。\n\n遊び要素がたっぷりで、好奇心のまま夢中で取り組めるんです。実際、多くの子どもたちが「勉強」というより「遊び」の感覚で通っています。\n\n夢中になってつくることで物事を理解し、それが自信につながります。自信がつくから続けられて、続けることで成長を実感できる。そんな好循環が生まれるんです。",
+                questions: [
+                    { id: 'pace', text: '授業についていけるか心配...' },
+                    { id: 'support', text: 'サポート体制は？' },
+                    { id: 'class', text: 'クラスの雰囲気は？' },
+                    { id: 'parent', text: '保護者のサポートは必要？' }
+                ]
+            },
+            beginner: {
+                user: "プログラミング未経験でも大丈夫？",
+                bot: "はい、まったく問題ありません！\n\nほとんどのお子さまが初心者からスタートしています。\n\n小学生でも理解できるビジュアルプログラミングを使うので、ドラッグ＆ドロップで直感的にプログラミングできます。\n\nパソコンの基本操作から丁寧にサポートしますし、ステップアップ式のカリキュラムで、自分のペースで無理なく学べる環境を整えています。\n\n大切なのは「やってみたい」という気持ちだけです！",
+                questions: [
+                    { id: 'curriculum', text: 'どんなことから始めるの？' },
+                    { id: 'homework', text: '宿題はある？' },
+                    { id: 'schedule', text: 'スケジュールは？' },
+                    { id: 'trial', text: '体験で雰囲気を見たい' }
+                ]
+            },
+            skills: {
+                user: "どんな力が身につくの？",
+                bot: "プログラミング技術はもちろんですが、それ以上に大切な力が身につきます。\n\n1. 自分で考える力：問いを立てて、試行錯誤しながら答えを見つける\n2. 伝える力：作った作品を自分の言葉で発表する経験を重ねる\n3. 協力する力：仲間と対話しながら、より良いものを作る\n4. 続ける力：自分で選んだことに責任を持って取り組む\n\nこれらは、どんな時代、どんな職業でも通用する普遍的な力です。\n\n進学や就職だけでなく、その先の人生を豊かに生きるための土台となります。",
+                questions: [
+                    { id: 'future', text: '将来どう役立つ？' },
+                    { id: 'event', text: '発表会などはある？' },
+                    { id: 'graduate', text: '卒業後も学べる？' },
+                    { id: 'achievement', text: '成果を実感できる？' }
+                ]
+            },
+            different: { // ★変更点: ここのquestionsに新しい質問を追加
+                user: "他のスクールとの違いは？",
+                bot: "最大の違いは「教え方」です。\n\n一般的なスクールでは、先生が正解を教えて、生徒がそれを覚える形が多いですよね。\n\nでもキープオンでは、私たちから正解を与えることはしません。代わりに「どう思う？」「なんでそう思うの？」と問いかけることで、子どもたち自身が考え、答えを見つけていきます。\n\nまた、毎週「だれでもYononaka」という時間があり、正解のないお題について自分の意見を作る練習もしています。\n\nこうした対話と探究を通じて、自律的に学ぶ力を育てているんです。",
+                questions: [
+                    { id: 'method', text: '具体的な授業の進め方は？' },
+                    { id: 'teacher', text: '先生はどんな人？' },
+                    { id: 'why_yononaka_importance', text: 'なぜYononakaで「正解のない問い」に取り組むの？' }, // ← 追加した質問
+                    { id: 'cost', text: '費用について教えて' },
+                    { id: 'online_option', text: 'オンライン対応は？' }
+                ]
+            },
+            // ★追加: Yononakaで「正解のない問い」に向き合う理由の説明
+            why_yononaka_importance: {
+                user: "なぜYononakaで「正解のない問い」に取り組むの？",
+                bot: "それは、これからの時代を生きる子どもたちにとって、とても大切な力を育むためなんです。\n\n" +
+                     "🧠 **学校と実社会の違い**\n" +
+                     "学校では「正しい答え」がある問題に多く取り組みますが、実社会や人生には、たった一つの正解がない問いの方がずっと多いんです。\n" +
+                     "例えば、「友達と意見が合わない時、どうする？」や「何を選んで買うか？」といった日常の選択から、「将来どんな仕事をしたいか？」といった大きな問いまで、テストのような100点の答えはありません。\n" +
+                     "だからこそ、自分の頭で考え、他の人と意見を交わしながら、自分なりの納得解を見つける力が必要になります。\n\n" +
+                     "📱 **情報があふれる現代**\n" +
+                     "今の子供たちは、スマートフォンやインターネットが当たり前の環境で育っています。情報は簡単に手に入りますが、その反面、何が本当に大切で、どれを信じればいいのか、見極めるのが難しくなっています。\n" +
+                     "このような時代には、誰かから与えられた「正解」に頼るのではなく、自分自身の価値観や判断基準で考える習慣が、ますます重要になってくるんです。\n\n" +
+                     "🌍 **変化の激しい時代に必要な力**\n" +
+                     "技術の進化は目覚ましく、社会のあり方も多様化しています。AIと共に働く未来、環境問題への対応など、子どもたちはこれまでの常識が通用しないような、新しい課題に直面していくでしょう。\n" +
+                     "「AIとどう協力していく？」「自分らしさって何だろう？」こうした問いに、決まった答えやマニュアルはありません。\n" +
+                     "しかし、自分の頭で考え、自分の言葉で表現し、他の人と対話を重ねることで、一歩ずつ「自分なりの答え」に近づいていくことができます。\n\n" +
+                     "💡 **だから、Yononakaでは…**\n" +
+                     "私たちは、Yononakaという時間を通じて、「正解のない問いに向き合う習慣」を子どもたちの日常に取り入れたいと考えています。\n" +
+                     "それによって育まれる思考力、対話力、判断力、共感力といった力は、学力だけでなく、これからの社会をしなやかに、そして力強く生き抜くための大切な土台になると信じています。",
+                questions: [
+                    { id: 'method', text: 'Yononakaの具体的な進め方は？' },
+                    { id: 'skills', text: '他にどんな力が身につくの？' },
+                    { id: 'trial', text: '体験してみたい' },
+                    { id: 'initial', text: '最初の質問に戻る' }
+                ]
+            },
+            age: {
+                user: "対象年齢は？",
+                bot: "小学生から中学生が中心ですが、「やってみたい」という気持ちがあれば、学年は問いません。\n\n実際に、小学1年生から中学3年生まで、幅広い年齢の子どもたちが一緒に学んでいます。\n\n異年齢での学び合いも、キープオンの特徴のひとつ。年上の子が年下の子をサポートしたり、年下の子の斬新なアイデアに年上の子が刺激を受けたり。\n\nそんな環境が、社会性を育む良い機会になっています。",
+                questions: [
+                    { id: 'level', text: '学年別のクラス分けは？' },
+                    { id: 'highschool', text: '高校生以上も可能？' },
+                    { id: 'trial', text: '体験で確認したい' },
+                    { id: 'schedule', text: '通える時間帯は？' }
+                ]
+            },
+            cost: {
+                user: "費用について教えて",
+                bot: "費用はコースによって異なりますが、月2回の授業が基本となっています。\n\n兄弟割引もご用意していますし、複数講座の受講も可能です。\n\nお支払い方法は、現金、口座振替、PayPay残高決済からお選びいただけます。\n\n入退会は自由で、違約金などは一切ありません。\n\n詳しい料金表は、ホームページでご確認いただくか、無料体験の際に詳しくご説明させていただきます。",
+                questions: [
+                    { id: 'trial', text: '無料体験はある？' },
+                    { id: 'material', text: '教材費は別？' },
+                    { id: 'discount', text: '割引制度について' },
+                    { id: 'contact', text: '詳しく相談したい' }
+                ]
+            },
+            trial: {
+                user: "体験はできる？",
+                bot: "はい！無料体験を実施しています。\n\n体験だけの参加も大歓迎です。実際の授業の雰囲気を感じていただけるよう、通常の授業と同じ内容を体験していただけます。\n\n持ち物は一切不要。手ぶらでお越しください！体験キットやパソコンはすべてこちらでご用意します。\n\n体験後に無理な勧誘などは一切ありませんので、安心してお子さまに合うかどうかをじっくりご検討ください。",
+                questions: [
+                    { id: 'apply', text: '体験に申し込みたい！' },
+                    { id: 'schedule', text: '体験できる日時は？' },
+                    { id: 'parent_join', text: '保護者も見学できる？' },
+                    { id: 'after_trial', text: '体験後の流れは？' }
+                ]
+            },
+            pace: {
+                user: "授業についていけるか心配...",
+                bot: "その心配は不要です！\n\nキープオンでは、一人ひとりのペースを大切にしています。ステップアップ式のカリキュラムで、理解度に合わせて進められます。\n\n分からないことがあれば、スタッフがすぐにサポート。1クラス12名までの少人数制で、複数のスタッフが見守っているので、きめ細かなフォローができます。\n\nまた、欠席した場合は振替受講も可能。無理なく続けられる環境を整えています。",
+                questions: [
+                    { id: 'support', text: 'どんなサポートがある？' },
+                    { id: 'class', text: 'クラスの雰囲気は？' },
+                    { id: 'trial', text: '体験で確認したい' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            apply: {
+                user: "体験に申し込みたい！",
+                bot: "ありがとうございます！\n\n無料体験のお申し込みは、下のボタンからGoogleフォームにて受け付けています。\n\nお申し込み後、担当者から日程調整のご連絡をさせていただきます。\n\n体験当日は、お子さまの「やってみたい」という気持ちだけお持ちください。きっと楽しい時間になると思います！\n\nご不明な点があれば、お気軽にお問い合わせくださいね。",
+                questions: [
+                    { id: 'contact_form_link', text: '申し込みフォームへ' },
+                    { id: 'more_info_link', text: 'もっと詳しく知りたい' },
+                    { id: 'initial', text: '最初の質問に戻る' }
+                ]
+            },
+            support: {
+                user: "サポート体制は？",
+                bot: "充実したサポート体制を整えています！\n\n1. 少人数制：1クラス12名までで、複数のスタッフがサポート\n2. 個別フォロー：つまずいているところを見逃さず、すぐにサポート\n3. 振替制度：欠席時も安心の振替受講が可能\n4. 保護者連携：LINEで授業の様子を動画でお送りします\n5. 質問対応：授業外でも質問を受け付けています\n\n「できない」を「できる」に変える瞬間を、スタッフ全員で支えます！",
+                questions: [
+                    { id: 'parent', text: '保護者の関わり方は？' },
+                    { id: 'class', text: 'クラスの雰囲気は？' },
+                    { id: 'trial', text: '体験で確認したい' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            class: {
+                user: "クラスの雰囲気は？",
+                bot: "とってもアットホームで楽しい雰囲気です！\n\n子どもたちは「先生」というより「一緒に考えてくれるお兄さん・お姉さん」という感覚でスタッフと接しています。\n\n異年齢の子どもたちが助け合いながら学ぶので、自然と協力する力も身につきます。\n\n「間違えてもいい」「人と違ってもいい」という安心感があるから、みんな自由に発想を広げています。\n\n笑い声が絶えない、そんな教室です！",
+                questions: [
+                    { id: 'event', text: 'イベントなどは？' },
+                    { id: 'achievement', text: '子どもたちの成果は？' },
+                    { id: 'trial', text: '実際に見てみたい' },
+                    { id: 'initial', text: '最初の質問に戻る' }
+                ]
+            },
+            parent: {
+                user: "保護者のサポートは必要？",
+                bot: "プログラミングの知識は一切必要ありません！\n\nお願いしたいのは、お子さまの「今日こんなの作ったよ！」という話を聞いてあげること。\n\n「どうやって作ったの？」「なんでそうしたの？」と聞いてあげるだけで、お子さまの思考はさらに深まります。\n\n授業の様子はLINEで動画をお送りするので、ご家庭でも話題にしていただけます。\n\n一緒に楽しんでいただけることが、何よりのサポートです！",
+                questions: [
+                    { id: 'report', text: '授業の様子を知る方法は？' },
+                    { id: 'homework', text: '家での課題は？' },
+                    { id: 'consultation', text: '相談できる？' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            curriculum: {
+                user: "どんなことから始めるの？",
+                bot: "最初は楽しいところから始めます！\n\n1. パソコンの基本操作（マウスやキーボード）\n2. ブロックを組み立てて簡単なロボット作り\n3. 信号機など身近なものの仕組みを学ぶ\n4. ビジュアルプログラミングで動かしてみる\n5. 自分のアイデアを加えてアレンジ\n\nいきなり難しいことはしません。「できた！」という成功体験を積み重ねながら、少しずつステップアップしていきます。\n\n大切なのは楽しむこと。楽しいから続く、続くから成長する！",
+                questions: [
+                    { id: 'language', text: '使うプログラミング言語は？' },
+                    { id: 'project', text: 'どんな作品を作る？' },
+                    { id: 'trial', text: '体験してみたい' },
+                    { id: 'initial', text: '最初に戻る' }
+                ]
+            },
+            homework: {
+                user: "宿題はある？",
+                bot: "強制的な宿題はありません！\n\nただし、「もっとやりたい！」という子には、自由課題をご用意しています。\n\n授業で作った作品を家でも再現してみたり、新しいアイデアを考えてきたり。それを次の授業で発表すると、みんなから「すごい！」と言われて、さらにやる気がアップ！\n\n「やらされる」のではなく「やりたい」から取り組む。それがキープオンスタイルです。",
+                questions: [
+                    { id: 'home_support', text: '家でのサポートは？' },
+                    { id: 'schedule', text: '授業の頻度は？' },
+                    { id: 'balance', text: '他の習い事との両立は？' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            schedule: {
+                user: "スケジュールは？",
+                bot: "基本は月2回、無理のないペースで通えます。\n\n平日の夕方や土曜日など、複数の時間帯をご用意しているので、他の習い事とも両立しやすいです。\n\n1回の授業は90分。集中力が続く、ちょうどいい長さです。\n\n欠席時は振替も可能なので、体調不良や学校行事があっても安心。\n\n詳しい時間割は、体験時にご相談ください。お子さまのスケジュールに合わせて調整します！",
+                questions: [
+                    { id: 'location', text: '教室の場所は？' },
+                    { id: 'online_option', text: 'オンライン受講は？' },
+                    { id: 'trial', text: '体験の予約をしたい' },
+                    { id: 'initial', text: '最初に戻る' }
+                ]
+            },
+            future: {
+                user: "将来どう役立つ？",
+                bot: "プログラミングスキルだけでなく、どんな職業でも必要な力が身につきます。\n\n例えば...\n・医師：患者さんの話を聞き、最適な治療法を考える\n・経営者：市場を分析し、新しいビジネスを創造する\n・教師：生徒一人ひとりに合った指導法を工夫する\n・エンジニア：課題を見つけ、技術で解決策を作る\n\nどの職業でも「考える力」「伝える力」「創る力」は必須。\n\nAI時代だからこそ、人間にしかできない創造的な仕事が重要になります。その土台を今から育てているんです！",
+                questions: [
+                    { id: 'graduate', text: '卒業生の進路は？' },
+                    { id: 'achievement', text: '具体的な成果は？' },
+                    { id: 'skills', text: '身につく力をもっと詳しく' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            event: {
+                user: "発表会などはある？",
+                bot: "年3回、ロボット発表会を開催しています！\n\nテーマに沿って、オリジナルロボットを製作。例えば「便利な生活ロボット」「未来の乗り物」など。\n\n子どもたちは数週間かけて準備し、当日は保護者の前で堂々と発表！最初は恥ずかしがっていた子も、回を重ねるごとに自信満々に。\n\nまた、「だれでもYononaka」では、正解のないお題についてみんなで意見交換。\n\nこうした経験が、人前で話す力や、自分の考えを伝える力を育てます！",
+                questions: [
+                    { id: 'weekly', text: '普段の授業での発表は？' },
+                    { id: 'community', text: '他の生徒との交流は？' },
+                    { id: 'achievement', text: '発表会の成果は？' },
+                    { id: 'initial', text: '最初に戻る' }
+                ]
+            },
+            graduate: {
+                user: "卒業後も学べる？",
+                bot: "もちろんです！卒業は「新たな学びの始まり」です。\n\n卒業後は...\n・PBL（課題解決型学習）コースでさらに深い学びへ\n・Yononakaなどのイベントに参加\n・スクールのアシスタントとして後輩をサポート\n・オンラインコミュニティで情報交換\n\n実際、高校生になってもイベントに顔を出してくれる子や、大学でロボット工学を専攻する子も。\n\n「学び続ける」というキープオンの理念は、卒業後も続いていきます！",
+                questions: [
+                    { id: 'alumni', text: '卒業生の活躍は？' },
+                    { id: 'advanced', text: '上級コースについて' },
+                    { id: 'community', text: 'コミュニティについて' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            achievement: {
+                user: "成果を実感できる？",
+                bot: "はい、必ず実感していただけます！\n\n3ヶ月後：「できた！」が増えて、自信がつく\n6ヶ月後：自分のアイデアを形にできるように\n1年後：堂々と発表できる姿に成長\n\n保護者の方からは...\n「学校の発表でも積極的に手を挙げるようになった」\n「自分で考えて行動することが増えた」\n「難しいことにも諦めずに挑戦するようになった」\n\nという嬉しい声をたくさんいただいています。\n\n毎回の授業動画で、成長の過程も見守れます！",
+                questions: [
+                    { id: 'voice', text: '他の保護者の声は？' },
+                    { id: 'trial', text: '実際に体験したい' },
+                    { id: 'apply', text: '申し込みたい！' },
+                    { id: 'initial', text: '最初に戻る' }
+                ]
+            },
+            method: {
+                user: "具体的な授業の進め方は？",
+                bot: "90分の授業はこんな流れです：\n\n1. だれでもYononaka（10分）\n   正解のないお題について意見を書く\n\n2. 今日のテーマ確認（10分）\n   何を作るか、どんな仕組みか理解\n\n3. 製作タイム（60分）\n   動画を見ながら自分のペースで製作\n   分からないところはスタッフがサポート\n\n4. 発表タイム（10分）\n   作った作品を自分の言葉で説明\n\nポイントは「教えすぎない」こと。\n子どもが自分で気づき、学ぶ瞬間を大切にしています！",
+                questions: [
+                    { id: 'material', text: '使う教材は？' },
+                    { id: 'teacher', text: 'スタッフについて' },
+                    { id: 'trial', text: '授業を体験したい' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            teacher: {
+                user: "先生はどんな人？",
+                bot: "「先生」というより「学びのパートナー」です！\n\n私たちスタッフは、答えを教える存在ではなく、一緒に考え、子どもたちの「なぜ？」「どうして？」に寄り添う存在。\n\nプログラミングの専門知識はもちろん、子どもたちの個性を大切にし、それぞれのペースに合わせたサポートができるよう研修を重ねています。\n\n「できない」と言う子には「一緒に考えよう」\n「分からない」と言う子には「どこまで分かった？」\n\nそんな声かけで、子どもたちの自律的な学びを支えています！",
+                questions: [
+                    { id: 'ratio', text: '先生と生徒の比率は？' },
+                    { id: 'training', text: 'スタッフの研修は？' },
+                    { id: 'support', text: 'サポート体制について' },
+                    { id: 'initial', text: '最初に戻る' }
+                ]
+            },
+            location: {
+                user: "教室の場所はどこですか？",
+                bot: "私たちの教室は[ここに教室の場所やアクセス情報を記述]にあります。詳細なアクセス方法はウェブサイトでもご確認いただけます。\n（この部分は実際の教室情報に置き換えてください）",
+                questions: [
+                    { id: 'online_option', text: 'オンライン対応は？' },
+                    { id: 'facility', text: '教室の設備は？' },
+                    { id: 'trial', text: '見学したい' },
+                    { id: 'initial', text: '他の質問を見る' }
+                ]
+            },
+            online_option: {
+                 user: "オンライン対応は？",
+                 bot: "はい、オンラインにも対応しています！\n\n基本的にはリアルな教室での授業が中心ですが、以下のプログラムはオンラインでも参加可能です：\n\n・Yononaka（対話型プログラム）\n・特別イベント\n・個別相談\n\nまた、遠方の方や、一時的に通えない場合のオンライン振替も検討可能です。\n\n教室の「みんなで学ぶ」雰囲気も大切にしながら、柔軟に対応させていただきます！",
+                 questions: [
+                     { id: 'location', text: '教室の場所は？' },
+                     { id: 'trial', text: '体験してみたい' },
+                     { id: 'initial', text: '他の質問を見る' }
+                 ]
             }
-            .concept-image-placeholder {
-                margin: 0 auto; /* 中央寄せ */
-                max-width: 500px; /* 最大幅 */
-            }
-            .comparison {
-                grid-template-columns: 1fr; /* 縦積みに */
-                gap: 25px;
-            }
-            .comparison-divider {
-                margin: 15px auto; /* マージン調整 */
-                transform: rotate(90deg); /* VSを縦に */
-                width: 50px; height: 70px; /* サイズ調整 */
-            }
-        }
+            // 他の既存の会話データはそのまま
+        };
 
-        @media (max-width: 768px) {
-            :root { --header-height: 70px; }
-            section { padding: 80px 0; }
-            .hero-title { font-size: 2.2rem; } /* clampの上限に近い値に */
-            .hero-subtitle { font-size: 1.25rem; }
-            .section-title { font-size: 2rem; margin-bottom: 50px; }
-            .section-title:after { width: 70px; height: 4px; bottom: -15px; }
+        // (元のJavaScriptコードの続きは変更なし)
+        // ...
+        let isBotTyping = false;
 
-            .pillars-grid { grid-template-columns: 1fr; gap: 30px; }
-            
-            .cta-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .cta-primary, .cta-button { /* CTAボタンは中央揃え */
-                text-align: center;
-                font-size: 1rem;
-                padding: 15px 30px;
-            }
+        // DOM要素
+        const chatArea = document.getElementById('chatArea');
+        const questionButtonsContainer = document.getElementById('questionButtons');
+        const characterUploadInput = document.getElementById('character-upload');
+        const characterImagePreview = document.getElementById('character-image');
+        const characterPlaceholder = document.querySelector('.character-placeholder');
 
-            .parent-question-container {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .speech-bubble {
-                max-width: 90%;
-            }
-            .speech-bubble::before { /* 吹き出しの▲を上に */
-                left: 50%;
-                transform: translateX(-50%);
-                top: -10px;
-                border-left: 10px solid transparent;
-                border-right: 10px solid transparent;
-                border-bottom: 10px solid var(--primary-blue);
-                border-top: 0;
-            }
-            .parent-icon-wrapper {
-                margin-bottom: 10px;
-                padding-top: 0;
-            }
-            
-            .why-grid { grid-template-columns: 1fr; gap: 30px; }
-            .ability-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            
-            .tooltip-content {
-                width: 90vw; /* 幅を画面幅に追従 */
-                max-width: 250px; /* 最大幅設定 */
-                font-size: 0.85rem;
-            }
+        let defaultBotAvatarSrc = ''; // 現在のボットアバターのURLを保持
 
-            .claft-title { font-size: 2.2rem; }
-            .claft-description { font-size: 1.1rem; }
-            .claft-features { grid-template-columns: 1fr; }
+        // キャラクター画像のアップロード処理
+        characterUploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result;
+                    characterImagePreview.src = imageUrl;
+                    characterImagePreview.style.display = 'block';
+                    characterPlaceholder.style.display = 'none';
+                    updateDefaultBotAvatar(imageUrl); // 新しい画像をデフォルトとして設定
 
-            .final-cta-content h2 { font-size: 1.8rem; }
-            .final-cta-content p { font-size: 1.1rem; }
-
-            .header-container { padding: 0 15px; }
-            .logo { font-size: 1.6rem; }
-            .cta-header { padding: 8px 20px; font-size: 14px;}
-        }
-        
-        @media (max-width: 480px) { /* スマホ向けさらに調整 */
-            .hero-title { font-size: 1.8rem; }
-            .hero-subtitle { font-size: 1.1rem; }
-            .section-title { font-size: 1.8rem; }
-            .problem-list { grid-template-columns: 1fr; } /* 悩みは1カラム */
-            .target-grid { grid-template-columns: 1fr; } /* ターゲットも1カラム */
-            .ability-grid { gap: 10px; }
-            .ability-item { padding: 15px 10px; }
-            .ability-icon { font-size: 1.8rem; }
-            .ability-name { font-size: 0.8rem; }
-        }
-
-        /* スクロールアニメーション (JavaScriptで制御) */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(40px); /* 少し大きく */
-            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transition-delay: 0.1s; /* 少し遅延 */
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Delay classes for staggered animation */
-        .delay-1 { transition-delay: 0.2s !important; }
-        .delay-2 { transition-delay: 0.3s !important; }
-        .delay-3 { transition-delay: 0.4s !important; }
-        .delay-4 { transition-delay: 0.5s !important; }
-
-    </style>
-</head>
-<body>
-    <!-- ローディング画面 -->
-    <div class="loader" id="loader">
-        <div class="loader-content">
-            <div class="loader-spinner"></div>
-            <p class="loader-text">読み込み中...</p>
-        </div>
-    </div>
-
-    <!-- ヘッダー -->
-    <header id="header">
-        <div class="header-container">
-            <a href="#" class="logo-link"><div class="logo">キープオン<span>スクール</span></div></a>
-            <nav>
-                <!-- ナビゲーションリンクを追加する場合はここに -->
-            </nav>
-            <a href="#final-cta" class="cta-header">無料体験はこちら</a>
-        </div>
-    </header>
-
-    <main>
-        <!-- ヒーローセクション -->
-        <section class="hero" id="hero">
-            <div class="hero-container">
-                <div class="hero-content fade-in">
-                    <h1 class="hero-title"><span>「自分で考える力」</span>を育む<br>未来のためのプログラミング</h1>
-                    <h2 class="hero-subtitle">ロボットプログラミングを通じて、<br>子どもたちの好奇心と創造力を無限に広げる場所。</h2>
-                    <p class="hero-description">
-                        キープオンスクールは、単にスキルを教えるだけではありません。<br>
-                        「なぜ？」「どうすれば？」と問い続ける楽しさを知り、<br>
-                        失敗を恐れず挑戦する心を育みます。
-                    </p>
-                    <div class="cta-group">
-                        <a href="#final-cta" class="cta-primary">無料体験に申し込む <i class="fas fa-arrow-right icon"></i></a>
-                        <!-- <a href="#concept" class="cta-secondary">もっと詳しく <i class="fas fa-chevron-down icon"></i></a> -->
-                    </div>
-                </div>
-            </div>
-            <div class="floating-shapes">
-                <div class="shape shape1"></div>
-                <div class="shape shape2"></div>
-                <div class="shape shape3"></div>
-            </div>
-        </section>
-
-        <!-- こんなお悩みありませんか？ -->
-        <section class="problems" id="problems">
-            <div class="container">
-                <h2 class="section-title fade-in">こんなお悩みありませんか？</h2>
-                <div class="problem-list">
-                    <div class="problem-item fade-in delay-1" data-index="0">
-                        <div class="problem-icon"><i class="fas fa-puzzle-piece"></i></div>
-                        <h3 class="problem-text">子どもの将来のために何かさせたいけど、何がいいか分からない…</h3>
-                    </div>
-                    <div class="problem-item fade-in delay-2" data-index="1">
-                        <div class="problem-icon"><i class="fas fa-graduation-cap"></i></div>
-                        <h3 class="problem-text">学校の勉強だけでなく、これからの時代に必要な実践的な力を身につけさせたい。</h3>
-                    </div>
-                    <div class="problem-item fade-in delay-3" data-index="2">
-                        <div class="problem-icon"><i class="fas fa-lightbulb"></i></div>
-                        <h3 class="problem-text">ゲームばかりで心配。もっと創造的な活動に興味を持ってほしい。</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- コンセプト：キープオンは「居場所」 -->
-        <section class="concept" id="concept">
-            <div class="container">
-                <h2 class="section-title fade-in">キープオンは「学びの居場所」</h2>
-                <div class="concept-content">
-                    <div class="concept-text fade-in delay-1">
-                        <h3><span class="highlight">「正解のない問い」</span>を楽しむ、<br>新感覚の学び体験。</h3>
-                        <p>
-                            私たちは、子どもたちが安心して自分を表現でき、失敗を恐れずに挑戦できる「居場所」であることを大切にしています。
-                            プログラミングは、そのための最高のツールです。
-                        </p>
-                        <p>
-                            ロボットを組み立て、プログラムで命を吹き込む。その過程で生まれる「なぜ？」「こうしたらどうなる？」という疑問こそが、学びの原動力。
-                            私たちは答えを教えるのではなく、子どもたちが<span class="highlight">自分で考え、試行錯誤し、答えを見つけ出す</span>プロセスを全力でサポートします。
-                        </p>
-                    </div>
-                    <div class="concept-image fade-in delay-2">
-                        <div class="concept-image-placeholder">
-                            <!-- 画像がないので、このままデザインされたプレースホルダとして機能 -->
-                            <!-- <p>未来を創る子どもたち</p> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 私たちが大切にする3つの柱 -->
-        <section class="pillars" id="pillars">
-            <div class="container">
-                <h2 class="section-title fade-in">キープオンが大切にする3つの柱</h2>
-                <div class="pillars-grid">
-                    <div class="pillar-card fade-in delay-1" data-index="0">
-                        <div class="pillar-header pillar-header1">
-                            <div class="pillar-number">01</div>
-                            <div class="pillar-icon"><i class="fas fa-brain"></i></div>
-                            <h3 class="pillar-title">自考力と探求心</h3>
-                            <p class="pillar-subtitle">自分で考え、答えを見つける喜び</p>
-                            <div class="expand-icon"><i class="fas fa-plus"></i></div>
-                        </div>
-                        <div class="pillar-content">
-                            <h4>「なぜ？」から始まる学び</h4>
-                            <p>
-                                子どもたちの純粋な「なぜ？」を大切にし、それを探求する旅に伴走します。
-                                指示された通りに作るのではなく、自分のアイデアを形にする過程で、論理的思考力や問題解決能力が自然と身につきます。
-                            </p>
-                            <div class="pillar-point">
-                                <strong>ポイント：</strong>身近なものの仕組みをプログラミングで再現し、そこから新しい発見へと繋げます。
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pillar-card fade-in delay-2" data-index="1">
-                        <div class="pillar-header pillar-header2">
-                            <div class="pillar-number">02</div>
-                            <div class="pillar-icon"><i class="fas fa-users"></i></div>
-                            <h3 class="pillar-title">協調性と表現力</h3>
-                            <p class="pillar-subtitle">仲間と共に創り、伝える力</p>
-                            <div class="expand-icon"><i class="fas fa-plus"></i></div>
-                        </div>
-                        <div class="pillar-content">
-                            <h4>チームで挑戦、アイデアを共有</h4>
-                            <p>
-                                グループワークや発表の機会を通じて、自分の考えを相手に分かりやすく伝える力や、多様な意見を尊重し協力する力を育みます。
-                                仲間と刺激し合うことで、一人では思いつかないアイデアが生まれることも。
-                            </p>
-                            <div class="pillar-point">
-                                <strong>ポイント：</strong>定期的な発表会や作品共有会で、プレゼンテーション能力も向上します。
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pillar-card fade-in delay-3" data-index="2">
-                        <div class="pillar-header pillar-header3">
-                            <div class="pillar-number">03</div>
-                            <div class="pillar-icon"><i class="fas fa-rocket"></i></div>
-                            <h3 class="pillar-title">創造性と挑戦する心</h3>
-                            <p class="pillar-subtitle">失敗を恐れず、未来を切り拓く</p>
-                            <div class="expand-icon"><i class="fas fa-plus"></i></div>
-                        </div>
-                        <div class="pillar-content">
-                            <h4>失敗は成功のもと</h4>
-                            <p>
-                                プログラミングにエラーはつきもの。それを乗り越える経験が、粘り強さと自信を育てます。
-                                自由な発想を歓迎し、ユニークなアイデアを形にする過程で、子どもたちの創造性は大きく花開きます。
-                            </p>
-                            <div class="pillar-point">
-                                <strong>ポイント：</strong>「こんなのできた！」という達成感が、次への挑戦意欲を引き出します。
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- なぜ「正解のない問い」が大切なのか？ -->
-        <section class="why-no-answer" id="why-no-answer">
-            <div class="container">
-                <h2 class="section-title fade-in">なぜ「正解のない問い」が<br class="sp-only">大切なのか？</h2>
-                <div class="why-intro fade-in delay-1">
-                    <h3>AI時代を生き抜くために、<br class="sp-only">本当に必要な力とは？</h3>
-                    <p>
-                        これからの社会は、予測不可能な変化に満ちています。
-                        知識を覚えるだけでは対応できない「正解のない問い」に直面する機会が増えるでしょう。
-                        そんな時代だからこそ、自ら問いを立て、考え抜き、行動する力が不可欠です。
-                    </p>
-                </div>
-
-                <div class="why-grid">
-                    <div class="why-card fade-in delay-2">
-                        <div class="why-card-icon"><i class="fas fa-cogs"></i></div>
-                        <h4>思考の柔軟性を養う</h4>
-                        <p>
-                            一つの答えに固執せず、多様な視点から物事を捉え、最適解を模索する力を育てます。
-                            この柔軟な思考は、新しいアイデアを生み出す源泉となります。
-                        </p>
-                        <div class="example-box">
-                            <h5>例えばこんな問い</h5>
-                            <ul class="example-list">
-                                <li>「未来の街はどうなっていると思う？」</li>
-                                <li>「みんなが笑顔になるロボットってどんなの？」</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="why-card fade-in delay-3">
-                        <div class="why-card-icon"><i class="fas fa-comments"></i></div>
-                        <h4>対話と共感力を深める</h4>
-                        <p>
-                            他者の意見に耳を傾け、建設的な対話を通じて理解を深めるプロセスを重視します。
-                            これにより、共感力やコミュニケーション能力が向上します。
-                        </p>
-                         <div class="example-box">
-                            <h5>例えばこんな問い</h5>
-                            <ul class="example-list">
-                                <li>「この問題を解決するために、どんな方法があるかな？」</li>
-                                <li>「他の人のアイデアの良いところはどこだろう？」</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="why-card fade-in delay-4">
-                        <div class="why-card-icon"><i class="fas fa-bullseye"></i></div>
-                        <h4>主体性と実行力を培う</h4>
-                        <p>
-                            自ら目標を設定し、計画を立て、最後までやり遂げる力を育みます。
-                            この主体性は、将来どんな道に進んでも役立つ重要な資質です。
-                        </p
-                           <div class="example-box">
-                            <h5>例えばこんな問い</h5>
-                            <ul class="example-list">
-                                <li>「自分なら、このロボットにどんな機能を追加する？」</li>
-                                <li>「このアイデアを実現するために、まず何をすべき？」</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="key-concept fade-in">
-                    <h3>
-                        <span class="tooltip">
-                            オーナーシップ
-                            <span class="tooltip-icon">？</span>
-                            <span class="tooltip-content">物事を「自分ごと」として捉え、主体的に関わろうとする姿勢のこと。</span>
-                        </span>
-                        を育む
-                    </h3>
-                    <p class="key-concept-term">「自分で選んだ」から「やり抜ける」</p>
-                    <p>
-                        私たちは、子どもたちが自ら課題を選び、解決方法を考え、行動することを尊重します。
-                        この「オーナーシップ」の経験が、学びへの意欲と継続する力を育むと信じています。
-                    </p>
-                    <div class="ability-grid">
-                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-search"></i></div><span class="ability-name">探求力</span></div>
-                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-lightbulb"></i></div><span class="ability-name">発想力</span></div>
-                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-check-double"></i></div><span class="ability-name">実行力</span></div>
-                        <div class="ability-item"><div class="ability-icon"><i class="fas fa-redo-alt"></i></div><span class="ability-name">継続力</span></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 他のスクールとの違い -->
-        <section class="difference" id="difference">
-            <div class="container">
-                <h2 class="section-title fade-in">他のスクールとの違いは？</h2>
-                <div class="comparison">
-                    <div class="comparison-item traditional fade-in delay-1">
-                        <h3>一般的なスクール</h3>
-                        <ul class="comparison-list">
-                            <li>先生が正解を教える</li>
-                            <li>カリキュラム通りに進む</li>
-                            <li>スキル習得が主な目的</li>
-                            <li>個々の進捗に差が出やすい</li>
-                        </ul>
-                    </div>
-                    <div class="comparison-divider fade-in delay-2">VS</div>
-                    <div class="comparison-item keepon fade-in delay-3">
-                        <h3>キープオンスクール</h3>
-                        <ul class="comparison-list">
-                            <li>子ども自身が答えを発見</li>
-                            <li>興味関心に合わせて探求</li>
-                            <li>「考える力」の育成が目的</li>
-                            <li>一人ひとりのペースを尊重</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- こんなお子様・保護者様へ -->
-        <section class="target" id="target">
-            <div class="container">
-                 <div class="parent-question-container fade-in">
-                    <div class="parent-icon-wrapper">
-                        <span class="parent-face-icon">🤔</span> <!-- 悩んでいる顔の絵文字など -->
-                    </div>
-                    <div class="speech-bubble">
-                        <p>「うちの子に合うかしら…？」<br>「プログラミングって難しそう…」</p>
-                    </div>
-                </div>
-                <h2 class="section-title fade-in delay-1">ご安心ください！<br>キープオンはこんなお子様・保護者様に<br class="sp-only">ぴったりです</h2>
-                <div class="target-grid">
-                    <div class="target-item fade-in delay-2" style="--index: 0;">
-                        <div class="target-emoji">💡</div>
-                        <h4>好奇心旺盛なお子様</h4>
-                        <p class="target-text">「なぜ？どうして？」が多いお子様の探求心を刺激し、知的好奇心を育てます。</p>
-                    </div>
-                    <div class="target-item fade-in delay-3" style="--index: 1;">
-                        <div class="target-emoji">🛠️</div>
-                        <h4>ものづくりが好きなお子様</h4>
-                        <p class="target-text">ブロックや工作が好きなお子様なら、ロボット製作とプログラミングに夢中になるはず！</p>
-                    </div>
-                    <div class="target-item fade-in delay-4" style="--index: 2;">
-                        <div class="target-emoji">🚀</div>
-                        <h4>新しいことに挑戦したいお子様</h4>
-                        <p class="target-text">プログラミング未経験でも大丈夫！「やってみたい」気持ちを全力で応援します。</p>
-                    </div>
-                    <div class="target-item fade-in delay-2" style="--index: 3;">
-                        <div class="target-emoji">👨‍👩‍👧‍👦</div>
-                        <h4>子どもの主体性を伸ばしたい保護者様</h4>
-                        <p class="target-text">「やらされる学習」ではなく、子どもが自ら考えて行動する力を育みたい方に。</p>
-                    </div>
-                    <div class="target-item fade-in delay-3" style="--index: 4;">
-                        <div class="target-emoji">🤝</div>
-                        <h4>コミュニケーション能力も高めたい保護者様</h4>
-                        <p class="target-text">仲間との協働や発表を通じて、伝える力や協力する大切さを学んでほしい方に。</p>
-                    </div>
-                     <div class="target-item fade-in delay-4" style="--index: 5;">
-                        <div class="target-emoji">💖</div>
-                        <h4>安心して学べる環境を求める保護者様</h4>
-                        <p class="target-text">少人数制でアットホーム。一人ひとりに寄り添ったサポートをお約束します。</p>
-                    </div>
-                </div>
-                <div class="welcome-message fade-in">
-                    どんなお子様でも大歓迎！<br>
-                    キープオンスクールで、新しい「好き」と「得意」を見つけませんか？
-                </div>
-            </div>
-        </section>
-
-        <!-- CLAFTメソッド -->
-        <section class="claft" id="claft">
-            <div class="container">
-                <div class="claft-content">
-                    <div class="claft-badge fade-in">キープオン独自の教育メソッド</div>
-                    <h2 class="claft-title fade-in delay-1">CLAFT<span style="font-size: 0.5em; vertical-align: super;">®</span> メソッド</h2>
-                    <p class="claft-description fade-in delay-2">
-                        Create (創造し) → Learn (学び) → Apply (応用し) → Feedback (振り返り) → Try again (再挑戦する)。
-                        この5つのサイクルを通じて、子どもたちは自律的に学びを深め、本質的な理解と応用力を獲得します。
-                    </p>
-                    <div class="claft-features">
-                        <div class="claft-feature fade-in delay-3">
-                            <div class="claft-feature-icon"><i class="fas fa-pencil-ruler"></i></div>
-                            <h3 class="claft-feature-title">Create</h3>
-                            <p>自由な発想でアイデアを形に</p>
-                        </div>
-                        <div class="claft-feature fade-in delay-3">
-                            <div class="claft-feature-icon"><i class="fas fa-book-open"></i></div>
-                            <h3 class="claft-feature-title">Learn</h3>
-                            <p>試行錯誤から本質を学ぶ</p>
-                        </div>
-                        <div class="claft-feature fade-in delay-4">
-                            <div class="claft-feature-icon"><i class="fas fa-puzzle-piece"></i></div>
-                            <h3 class="claft-feature-title">Apply</h3>
-                            <p>知識を応用し課題解決</p>
-                        </div>
-                        <div class="claft-feature fade-in delay-4">
-                            <div class="claft-feature-icon"><i class="fas fa-sync-alt"></i></div>
-                            <h3 class="claft-feature-title">Feedback</h3>
-                            <p>仲間や講師と振り返り</p>
-                        </div>
-                         <div class="claft-feature fade-in delay-4">
-                            <div class="claft-feature-icon"><i class="fas fa-arrow-up"></i></div>
-                            <h3 class="claft-feature-title">Try again</h3>
-                            <p>改善し再挑戦する力</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 最終CTAセクション -->
-        <section class="final-cta" id="final-cta">
-            <div class="container">
-                <div class="final-cta-content">
-                    <h2 class="fade-in">さあ、キープオンで<br class="sp-only">未来への第一歩を踏み出そう！</h2>
-                    <p class="fade-in delay-1">
-                        無料体験レッスンで、キープオンスクールの楽しさを体感してください。<br>
-                        お子様の新たな可能性が、ここから始まります。
-                    </p>
-                    <div class="cta-buttons fade-in delay-2">
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLScqAKJ3CgsLb-COaE_fqsUwVGKcoiab21a3f5KrLYEzDHNzVQ/viewform" target="_blank" rel="noopener noreferrer" class="cta-button primary">
-                            無料体験に申し込む <i class="fas fa-chalkboard-teacher icon"></i>
-                        </a>
-                        <a href="https://www.keeponlearning.fun/" target="_blank" rel="noopener noreferrer" class="cta-button secondary">
-                            もっと詳しく見る <i class="fas fa-info-circle icon"></i>
-                        </a>
-                    </div>
-
-                    <div class="access-info fade-in delay-3">
-                        <h3>アクセス・お問い合わせ</h3>
-                        <p>
-                            <strong>キープオンスクール [教室名]</strong><br>
-                            〒XXX-XXXX [ここに住所を記入]<br>
-                            [最寄駅]駅より徒歩X分
-                        </p>
-                        <p>
-                            営業時間: [例: 平日 15:00-19:00 / 土曜 10:00-18:00]<br>
-                            定休日: [例: 日曜・祝日]
-                        </p>
-                        <p class="tel">
-                            <a href="tel:09012345678"> <!-- 電話番号を設定 -->
-                                <i class="fas fa-phone-alt icon"></i>090-1234-5678
-                            </a>
-                        </p>
-                        <p>※体験授業の日時はご相談に応じます。お気軽にお問い合わせください。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- フッター -->
-    <footer>
-        <div class="footer-content">
-            <a href="#" class="footer-logo">キープオン<span>スクール</span></a>
-            <div class="footer-links">
-                <a href="#hero">ホーム</a>
-                <a href="#concept">コンセプト</a>
-                <a href="#pillars">3つの柱</a>
-                <a href="#final-cta">無料体験</a>
-                <a href="https://www.keeponlearning.fun/privacy-policy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a>
-            </div>
-            <p class="copyright">© 2024 キープオンスクール. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // ローダー非表示
-            const loader = document.getElementById('loader');
-            if (loader) {
-                window.addEventListener('load', () => { // ページ全体の読み込み完了後
-                    loader.classList.add('hidden');
-                });
-            }
-
-            // ヘッダースクロールエフェクト
-            const header = document.getElementById('header');
-            if (header) {
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 50) {
-                        header.classList.add('scrolled');
-                    } else {
-                        header.classList.remove('scrolled');
-                    }
-                });
-            }
-
-            // Pillar Cardの展開
-            const pillarCards = document.querySelectorAll('.pillar-card');
-            pillarCards.forEach(card => {
-                const header = card.querySelector('.pillar-header');
-                if (header) {
-                    header.addEventListener('click', () => {
-                        // 他の開いているカードを閉じる (任意)
-                        // pillarCards.forEach(otherCard => {
-                        //     if (otherCard !== card && otherCard.classList.contains('active')) {
-                        //         otherCard.classList.remove('active');
-                        //     }
-                        // });
-                        card.classList.toggle('active');
+                    // 表示済みのボットアバターも更新
+                    document.querySelectorAll('.bot-avatar img.dynamic-avatar').forEach(img => {
+                        img.src = imageUrl;
                     });
-                }
-            });
-
-            // スクロールフェードインアニメーション
-            const fadeInElements = document.querySelectorAll('.fade-in');
-            if (fadeInElements.length > 0) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                            // 一度表示されたら監視を停止 (任意)
-                            // observer.unobserve(entry.target); 
-                        }
-                    });
-                }, {
-                    threshold: 0.1 // 10%要素が見えたら発火
-                });
-
-                fadeInElements.forEach(el => {
-                    observer.observe(el);
-                });
+                };
+                reader.readAsDataURL(file);
+            } else if (file) {
+                alert("画像ファイルを選択してください。");
             }
-
-            // スムーズスクロール (CSSのscroll-behavior: smoothと併用、または単独でより細かく制御する場合)
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    const hrefAttribute = this.getAttribute('href');
-                    // 外部リンクや意味のない#の場合はデフォルト動作
-                    if (hrefAttribute === '#' || hrefAttribute.startsWith('#') === false || document.querySelector(hrefAttribute) === null) {
-                        return;
-                    }
-                    e.preventDefault();
-                    const targetElement = document.querySelector(hrefAttribute);
-                    if (targetElement) {
-                        const headerOffset = header ? header.offsetHeight : 0; // ヘッダーの高さを考慮
-                        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-                        const offsetPosition = elementPosition - headerOffset - 10; // 10pxの余白
-
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: "smooth"
-                        });
-                    }
-                });
-            });
         });
+
+        // デフォルトのボットアバターURLを更新する関数
+        function updateDefaultBotAvatar(src = '') {
+            defaultBotAvatarSrc = src;
+        }
+
+
+        // メッセージをチャットエリアに追加する関数
+        function addMessage(type, content, callback) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message ${type}`;
+
+            const messageContentDiv = document.createElement('div');
+            messageContentDiv.className = 'message-content';
+
+            if (type === 'bot') {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'bot-avatar';
+
+                if (defaultBotAvatarSrc) {
+                    const img = document.createElement('img');
+                    img.src = defaultBotAvatarSrc;
+                    img.alt = "ボットアバター";
+                    img.classList.add("dynamic-avatar");
+                    avatarDiv.appendChild(img);
+                } else {
+                    avatarDiv.textContent = '🤖';
+                }
+                messageWrapper.appendChild(avatarDiv);
+                messageWrapper.appendChild(messageContentDiv);
+
+                chatArea.appendChild(messageWrapper);
+                scrollChatToBottom();
+
+                isBotTyping = true;
+                toggleQuestionButtons(true);
+                showTypingIndicator(messageContentDiv, () => {
+                    // 絵文字を活かすために、HTMLエンティティへの変換は行わず、\nを<br>に置換するのみ
+                    messageContentDiv.innerHTML = content.replace(/\n/g, '<br>');
+                    isBotTyping = false;
+                    // ボタンの有効化は handleQuestion 内のコールバックで実行
+                    if (callback) callback();
+                    scrollChatToBottom();
+                });
+            } else { // User message
+                messageContentDiv.innerHTML = content.replace(/\n/g, '<br>');
+                messageWrapper.appendChild(messageContentDiv);
+                chatArea.appendChild(messageWrapper);
+                scrollChatToBottom();
+                if (callback) callback();
+            }
+        }
+
+        // タイピングインジケーターを表示
+        function showTypingIndicator(messageContentElement, callback) {
+            messageContentElement.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            scrollChatToBottom();
+            setTimeout(callback, 1200 + Math.random() * 800);
+        }
+
+        // 質問ボタンを更新
+        function updateQuestions(questions) {
+            questionButtonsContainer.innerHTML = '';
+            if (!questions || questions.length === 0) {
+                const noMoreQuestionsButton = document.createElement('button');
+                noMoreQuestionsButton.className = 'question-btn';
+                noMoreQuestionsButton.textContent = '最初の質問に戻る';
+                noMoreQuestionsButton.onclick = () => handleQuestion('initial');
+                questionButtonsContainer.appendChild(noMoreQuestionsButton);
+                return;
+            }
+
+            questions.forEach(q => {
+                const button = document.createElement('button');
+                button.className = 'question-btn';
+                button.textContent = q.text;
+                if (q.id) {
+                    button.onclick = () => handleQuestion(q.id);
+                } else {
+                    console.warn("質問データにIDがありません:", q);
+                    button.disabled = true;
+                }
+                button.disabled = isBotTyping;
+                questionButtonsContainer.appendChild(button);
+            });
+        }
+
+        // 質問ボタンを無効化/有効化
+        function toggleQuestionButtons(disabled) {
+            questionButtonsContainer.querySelectorAll('.question-btn').forEach(btn => {
+                btn.disabled = disabled;
+            });
+        }
+
+        // 質問を処理
+        function handleQuestion(questionId) {
+            if (isBotTyping) return;
+
+            // 特別なリンク処理を先に行う
+            if (questionId === 'contact_form_link') {
+                window.open('https://docs.google.com/forms/d/e/1FAIpQLScqAKJ3CgsLb-COaE_fqsUwVGKcoiab21a3f5KrLYEzDHNzVQ/viewform', '_blank', 'noopener,noreferrer');
+            } else if (questionId === 'more_info_link') {
+                window.open('https://www.keeponlearning.fun/', '_blank', 'noopener,noreferrer');
+            }
+
+            const data = chatData[questionId];
+            if (!data) {
+                console.error(`質問IDに対応するチャットデータが見つかりません: ${questionId}`);
+                addMessage('bot', '申し訳ありません、その質問には現在お答えできません。他の質問を選んでいただけますか？', () => {
+                    updateQuestions(chatData.initial.questions);
+                    toggleQuestionButtons(false);
+                });
+                return;
+            }
+
+            toggleQuestionButtons(true);
+
+            if (data.user) {
+                addMessage('user', data.user, () => {
+                    setTimeout(() => {
+                        addMessage('bot', data.bot, () => {
+                            updateQuestions(data.questions);
+                            toggleQuestionButtons(false);
+                        });
+                    }, 400 + Math.random() * 400);
+                });
+            } else {
+                 addMessage('bot', data.bot, () => {
+                    updateQuestions(data.questions);
+                    toggleQuestionButtons(false);
+                });
+            }
+        }
+
+        // チャットエリアを一番下にスクロール
+        function scrollChatToBottom() {
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // 初期化関数
+        function init() {
+            const initialData = chatData.initial;
+            if (initialData) {
+                setTimeout(() => {
+                    addMessage('bot', initialData.bot, () => {
+                        updateQuestions(initialData.questions);
+                        toggleQuestionButtons(false);
+                    });
+                }, 700);
+            } else {
+                console.error("初期チャットデータが見つかりません!");
+            }
+            updateDefaultBotAvatar(characterImagePreview.src && characterImagePreview.style.display === 'block' ? characterImagePreview.src : '');
+        }
+
+        // DOMContentLoaded後に関数を実行
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
