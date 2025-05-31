@@ -1,479 +1,1778 @@
-        // チャットデータ (元のJavaScriptのchatDataをここにコピーしてください)
-        const chatData = {
-            initial: {
-                bot: "こんにちは！キープオンスクールの案内役、センサーです。\n\n私たちのスクールに興味を持っていただき、ありがとうございます！\n\nキープオンについて、どんなことが知りたいですか？",
-                questions: [
-                    { id: 'about', text: 'どんなスクールなの？' },
-                    { id: 'enjoy', text: 'うちの子でも楽しめる？' },
-                    { id: 'beginner', text: 'プログラミング未経験でも大丈夫？' },
-                    { id: 'skills', text: 'どんな力が身につくの？' }
-                ]
-            },
-            about: {
-                user: "どんなスクールなの？",
-                bot: "キープオンは、ただプログラミングを教えるだけのスクールではありません。\n\n私たちの最大の特徴は「正解のない問いを楽しむ」ことです。\n\n社会には正解がひとつではない場面がたくさんありますよね。そんな時に、自分で考えて、自分で選択して、自分で行動できる「自律型人材」を育てることが私たちの目標です。\n\nロボット製作やプログラミングを通じて、身近なもの（信号機や自動ドアなど）の仕組みを学び、そこに自分のアイデアを加えて、オリジナルの作品を作っていきます。",
-                questions: [
-                    { id: 'different', text: '他のスクールとの違いは？' },
-                    { id: 'age', text: '対象年齢は？' },
-                    { id: 'cost', text: '費用について教えて' },
-                    { id: 'trial', text: '体験はできる？' }
-                ]
-            },
-            enjoy: {
-                user: "うちの子でも楽しめる？",
-                bot: "もちろん楽しめます！\n\nキープオンでは、ブロック、パズル、ゲーム、ロボットなど、わくわくするカリキュラムをご用意しています。\n\n遊び要素がたっぷりで、好奇心のまま夢中で取り組めるんです。実際、多くの子どもたちが「勉強」というより「遊び」の感覚で通っています。\n\n夢中になってつくることで物事を理解し、それが自信につながります。自信がつくから続けられて、続けることで成長を実感できる。そんな好循環が生まれるんです。",
-                questions: [
-                    { id: 'pace', text: '授業についていけるか心配...' },
-                    { id: 'support', text: 'サポート体制は？' },
-                    { id: 'class', text: 'クラスの雰囲気は？' },
-                    { id: 'parent', text: '保護者のサポートは必要？' }
-                ]
-            },
-            beginner: {
-                user: "プログラミング未経験でも大丈夫？",
-                bot: "はい、まったく問題ありません！\n\nほとんどのお子さまが初心者からスタートしています。\n\n小学生でも理解できるビジュアルプログラミングを使うので、ドラッグ＆ドロップで直感的にプログラミングできます。\n\nパソコンの基本操作から丁寧にサポートしますし、ステップアップ式のカリキュラムで、自分のペースで無理なく学べる環境を整えています。\n\n大切なのは「やってみたい」という気持ちだけです！",
-                questions: [
-                    { id: 'curriculum', text: 'どんなことから始めるの？' },
-                    { id: 'homework', text: '宿題はある？' },
-                    { id: 'schedule', text: 'スケジュールは？' },
-                    { id: 'trial', text: '体験で雰囲気を見たい' }
-                ]
-            },
-            skills: {
-                user: "どんな力が身につくの？",
-                bot: "プログラミング技術はもちろんですが、それ以上に大切な力が身につきます。\n\n1. 自分で考える力：問いを立てて、試行錯誤しながら答えを見つける\n2. 伝える力：作った作品を自分の言葉で発表する経験を重ねる\n3. 協力する力：仲間と対話しながら、より良いものを作る\n4. 続ける力：自分で選んだことに責任を持って取り組む\n\nこれらは、どんな時代、どんな職業でも通用する普遍的な力です。\n\n進学や就職だけでなく、その先の人生を豊かに生きるための土台となります。",
-                questions: [
-                    { id: 'future', text: '将来どう役立つ？' },
-                    { id: 'event', text: '発表会などはある？' },
-                    { id: 'graduate', text: '卒業後も学べる？' },
-                    { id: 'achievement', text: '成果を実感できる？' }
-                ]
-            },
-            different: { // ★変更点: ここのquestionsに新しい質問を追加
-                user: "他のスクールとの違いは？",
-                bot: "最大の違いは「教え方」です。\n\n一般的なスクールでは、先生が正解を教えて、生徒がそれを覚える形が多いですよね。\n\nでもキープオンでは、私たちから正解を与えることはしません。代わりに「どう思う？」「なんでそう思うの？」と問いかけることで、子どもたち自身が考え、答えを見つけていきます。\n\nまた、毎週「だれでもYononaka」という時間があり、正解のないお題について自分の意見を作る練習もしています。\n\nこうした対話と探究を通じて、自律的に学ぶ力を育てているんです。",
-                questions: [
-                    { id: 'method', text: '具体的な授業の進め方は？' },
-                    { id: 'teacher', text: '先生はどんな人？' },
-                    { id: 'why_yononaka_importance', text: 'なぜYononakaで「正解のない問い」に取り組むの？' }, // ← 追加した質問
-                    { id: 'cost', text: '費用について教えて' },
-                    { id: 'online_option', text: 'オンライン対応は？' }
-                ]
-            },
-            // ★追加: Yononakaで「正解のない問い」に向き合う理由の説明
-            why_yononaka_importance: {
-                user: "なぜYononakaで「正解のない問い」に取り組むの？",
-                bot: "それは、これからの時代を生きる子どもたちにとって、とても大切な力を育むためなんです。\n\n" +
-                     "🧠 **学校と実社会の違い**\n" +
-                     "学校では「正しい答え」がある問題に多く取り組みますが、実社会や人生には、たった一つの正解がない問いの方がずっと多いんです。\n" +
-                     "例えば、「友達と意見が合わない時、どうする？」や「何を選んで買うか？」といった日常の選択から、「将来どんな仕事をしたいか？」といった大きな問いまで、テストのような100点の答えはありません。\n" +
-                     "だからこそ、自分の頭で考え、他の人と意見を交わしながら、自分なりの納得解を見つける力が必要になります。\n\n" +
-                     "📱 **情報があふれる現代**\n" +
-                     "今の子供たちは、スマートフォンやインターネットが当たり前の環境で育っています。情報は簡単に手に入りますが、その反面、何が本当に大切で、どれを信じればいいのか、見極めるのが難しくなっています。\n" +
-                     "このような時代には、誰かから与えられた「正解」に頼るのではなく、自分自身の価値観や判断基準で考える習慣が、ますます重要になってくるんです。\n\n" +
-                     "🌍 **変化の激しい時代に必要な力**\n" +
-                     "技術の進化は目覚ましく、社会のあり方も多様化しています。AIと共に働く未来、環境問題への対応など、子どもたちはこれまでの常識が通用しないような、新しい課題に直面していくでしょう。\n" +
-                     "「AIとどう協力していく？」「自分らしさって何だろう？」こうした問いに、決まった答えやマニュアルはありません。\n" +
-                     "しかし、自分の頭で考え、自分の言葉で表現し、他の人と対話を重ねることで、一歩ずつ「自分なりの答え」に近づいていくことができます。\n\n" +
-                     "💡 **だから、Yononakaでは…**\n" +
-                     "私たちは、Yononakaという時間を通じて、「正解のない問いに向き合う習慣」を子どもたちの日常に取り入れたいと考えています。\n" +
-                     "それによって育まれる思考力、対話力、判断力、共感力といった力は、学力だけでなく、これからの社会をしなやかに、そして力強く生き抜くための大切な土台になると信じています。",
-                questions: [
-                    { id: 'method', text: 'Yononakaの具体的な進め方は？' },
-                    { id: 'skills', text: '他にどんな力が身につくの？' },
-                    { id: 'trial', text: '体験してみたい' },
-                    { id: 'initial', text: '最初の質問に戻る' }
-                ]
-            },
-            age: {
-                user: "対象年齢は？",
-                bot: "小学生から中学生が中心ですが、「やってみたい」という気持ちがあれば、学年は問いません。\n\n実際に、小学1年生から中学3年生まで、幅広い年齢の子どもたちが一緒に学んでいます。\n\n異年齢での学び合いも、キープオンの特徴のひとつ。年上の子が年下の子をサポートしたり、年下の子の斬新なアイデアに年上の子が刺激を受けたり。\n\nそんな環境が、社会性を育む良い機会になっています。",
-                questions: [
-                    { id: 'level', text: '学年別のクラス分けは？' },
-                    { id: 'highschool', text: '高校生以上も可能？' },
-                    { id: 'trial', text: '体験で確認したい' },
-                    { id: 'schedule', text: '通える時間帯は？' }
-                ]
-            },
-            cost: {
-                user: "費用について教えて",
-                bot: "費用はコースによって異なりますが、月2回の授業が基本となっています。\n\n兄弟割引もご用意していますし、複数講座の受講も可能です。\n\nお支払い方法は、現金、口座振替、PayPay残高決済からお選びいただけます。\n\n入退会は自由で、違約金などは一切ありません。\n\n詳しい料金表は、ホームページでご確認いただくか、無料体験の際に詳しくご説明させていただきます。",
-                questions: [
-                    { id: 'trial', text: '無料体験はある？' },
-                    { id: 'material', text: '教材費は別？' },
-                    { id: 'discount', text: '割引制度について' },
-                    { id: 'contact', text: '詳しく相談したい' }
-                ]
-            },
-            trial: {
-                user: "体験はできる？",
-                bot: "はい！無料体験を実施しています。\n\n体験だけの参加も大歓迎です。実際の授業の雰囲気を感じていただけるよう、通常の授業と同じ内容を体験していただけます。\n\n持ち物は一切不要。手ぶらでお越しください！体験キットやパソコンはすべてこちらでご用意します。\n\n体験後に無理な勧誘などは一切ありませんので、安心してお子さまに合うかどうかをじっくりご検討ください。",
-                questions: [
-                    { id: 'apply', text: '体験に申し込みたい！' },
-                    { id: 'schedule', text: '体験できる日時は？' },
-                    { id: 'parent_join', text: '保護者も見学できる？' },
-                    { id: 'after_trial', text: '体験後の流れは？' }
-                ]
-            },
-            pace: {
-                user: "授業についていけるか心配...",
-                bot: "その心配は不要です！\n\nキープオンでは、一人ひとりのペースを大切にしています。ステップアップ式のカリキュラムで、理解度に合わせて進められます。\n\n分からないことがあれば、スタッフがすぐにサポート。1クラス12名までの少人数制で、複数のスタッフが見守っているので、きめ細かなフォローができます。\n\nまた、欠席した場合は振替受講も可能。無理なく続けられる環境を整えています。",
-                questions: [
-                    { id: 'support', text: 'どんなサポートがある？' },
-                    { id: 'class', text: 'クラスの雰囲気は？' },
-                    { id: 'trial', text: '体験で確認したい' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            apply: {
-                user: "体験に申し込みたい！",
-                bot: "ありがとうございます！\n\n無料体験のお申し込みは、下のボタンからGoogleフォームにて受け付けています。\n\nお申し込み後、担当者から日程調整のご連絡をさせていただきます。\n\n体験当日は、お子さまの「やってみたい」という気持ちだけお持ちください。きっと楽しい時間になると思います！\n\nご不明な点があれば、お気軽にお問い合わせくださいね。",
-                questions: [
-                    { id: 'contact_form_link', text: '申し込みフォームへ' },
-                    { id: 'more_info_link', text: 'もっと詳しく知りたい' },
-                    { id: 'initial', text: '最初の質問に戻る' }
-                ]
-            },
-            support: {
-                user: "サポート体制は？",
-                bot: "充実したサポート体制を整えています！\n\n1. 少人数制：1クラス12名までで、複数のスタッフがサポート\n2. 個別フォロー：つまずいているところを見逃さず、すぐにサポート\n3. 振替制度：欠席時も安心の振替受講が可能\n4. 保護者連携：LINEで授業の様子を動画でお送りします\n5. 質問対応：授業外でも質問を受け付けています\n\n「できない」を「できる」に変える瞬間を、スタッフ全員で支えます！",
-                questions: [
-                    { id: 'parent', text: '保護者の関わり方は？' },
-                    { id: 'class', text: 'クラスの雰囲気は？' },
-                    { id: 'trial', text: '体験で確認したい' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            class: {
-                user: "クラスの雰囲気は？",
-                bot: "とってもアットホームで楽しい雰囲気です！\n\n子どもたちは「先生」というより「一緒に考えてくれるお兄さん・お姉さん」という感覚でスタッフと接しています。\n\n異年齢の子どもたちが助け合いながら学ぶので、自然と協力する力も身につきます。\n\n「間違えてもいい」「人と違ってもいい」という安心感があるから、みんな自由に発想を広げています。\n\n笑い声が絶えない、そんな教室です！",
-                questions: [
-                    { id: 'event', text: 'イベントなどは？' },
-                    { id: 'achievement', text: '子どもたちの成果は？' },
-                    { id: 'trial', text: '実際に見てみたい' },
-                    { id: 'initial', text: '最初の質問に戻る' }
-                ]
-            },
-            parent: {
-                user: "保護者のサポートは必要？",
-                bot: "プログラミングの知識は一切必要ありません！\n\nお願いしたいのは、お子さまの「今日こんなの作ったよ！」という話を聞いてあげること。\n\n「どうやって作ったの？」「なんでそうしたの？」と聞いてあげるだけで、お子さまの思考はさらに深まります。\n\n授業の様子はLINEで動画をお送りするので、ご家庭でも話題にしていただけます。\n\n一緒に楽しんでいただけることが、何よりのサポートです！",
-                questions: [
-                    { id: 'report', text: '授業の様子を知る方法は？' },
-                    { id: 'homework', text: '家での課題は？' },
-                    { id: 'consultation', text: '相談できる？' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            curriculum: {
-                user: "どんなことから始めるの？",
-                bot: "最初は楽しいところから始めます！\n\n1. パソコンの基本操作（マウスやキーボード）\n2. ブロックを組み立てて簡単なロボット作り\n3. 信号機など身近なものの仕組みを学ぶ\n4. ビジュアルプログラミングで動かしてみる\n5. 自分のアイデアを加えてアレンジ\n\nいきなり難しいことはしません。「できた！」という成功体験を積み重ねながら、少しずつステップアップしていきます。\n\n大切なのは楽しむこと。楽しいから続く、続くから成長する！",
-                questions: [
-                    { id: 'language', text: '使うプログラミング言語は？' },
-                    { id: 'project', text: 'どんな作品を作る？' },
-                    { id: 'trial', text: '体験してみたい' },
-                    { id: 'initial', text: '最初に戻る' }
-                ]
-            },
-            homework: {
-                user: "宿題はある？",
-                bot: "強制的な宿題はありません！\n\nただし、「もっとやりたい！」という子には、自由課題をご用意しています。\n\n授業で作った作品を家でも再現してみたり、新しいアイデアを考えてきたり。それを次の授業で発表すると、みんなから「すごい！」と言われて、さらにやる気がアップ！\n\n「やらされる」のではなく「やりたい」から取り組む。それがキープオンスタイルです。",
-                questions: [
-                    { id: 'home_support', text: '家でのサポートは？' },
-                    { id: 'schedule', text: '授業の頻度は？' },
-                    { id: 'balance', text: '他の習い事との両立は？' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            schedule: {
-                user: "スケジュールは？",
-                bot: "基本は月2回、無理のないペースで通えます。\n\n平日の夕方や土曜日など、複数の時間帯をご用意しているので、他の習い事とも両立しやすいです。\n\n1回の授業は90分。集中力が続く、ちょうどいい長さです。\n\n欠席時は振替も可能なので、体調不良や学校行事があっても安心。\n\n詳しい時間割は、体験時にご相談ください。お子さまのスケジュールに合わせて調整します！",
-                questions: [
-                    { id: 'location', text: '教室の場所は？' },
-                    { id: 'online_option', text: 'オンライン受講は？' },
-                    { id: 'trial', text: '体験の予約をしたい' },
-                    { id: 'initial', text: '最初に戻る' }
-                ]
-            },
-            future: {
-                user: "将来どう役立つ？",
-                bot: "プログラミングスキルだけでなく、どんな職業でも必要な力が身につきます。\n\n例えば...\n・医師：患者さんの話を聞き、最適な治療法を考える\n・経営者：市場を分析し、新しいビジネスを創造する\n・教師：生徒一人ひとりに合った指導法を工夫する\n・エンジニア：課題を見つけ、技術で解決策を作る\n\nどの職業でも「考える力」「伝える力」「創る力」は必須。\n\nAI時代だからこそ、人間にしかできない創造的な仕事が重要になります。その土台を今から育てているんです！",
-                questions: [
-                    { id: 'graduate', text: '卒業生の進路は？' },
-                    { id: 'achievement', text: '具体的な成果は？' },
-                    { id: 'skills', text: '身につく力をもっと詳しく' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            event: {
-                user: "発表会などはある？",
-                bot: "年3回、ロボット発表会を開催しています！\n\nテーマに沿って、オリジナルロボットを製作。例えば「便利な生活ロボット」「未来の乗り物」など。\n\n子どもたちは数週間かけて準備し、当日は保護者の前で堂々と発表！最初は恥ずかしがっていた子も、回を重ねるごとに自信満々に。\n\nまた、「だれでもYononaka」では、正解のないお題についてみんなで意見交換。\n\nこうした経験が、人前で話す力や、自分の考えを伝える力を育てます！",
-                questions: [
-                    { id: 'weekly', text: '普段の授業での発表は？' },
-                    { id: 'community', text: '他の生徒との交流は？' },
-                    { id: 'achievement', text: '発表会の成果は？' },
-                    { id: 'initial', text: '最初に戻る' }
-                ]
-            },
-            graduate: {
-                user: "卒業後も学べる？",
-                bot: "もちろんです！卒業は「新たな学びの始まり」です。\n\n卒業後は...\n・PBL（課題解決型学習）コースでさらに深い学びへ\n・Yononakaなどのイベントに参加\n・スクールのアシスタントとして後輩をサポート\n・オンラインコミュニティで情報交換\n\n実際、高校生になってもイベントに顔を出してくれる子や、大学でロボット工学を専攻する子も。\n\n「学び続ける」というキープオンの理念は、卒業後も続いていきます！",
-                questions: [
-                    { id: 'alumni', text: '卒業生の活躍は？' },
-                    { id: 'advanced', text: '上級コースについて' },
-                    { id: 'community', text: 'コミュニティについて' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            achievement: {
-                user: "成果を実感できる？",
-                bot: "はい、必ず実感していただけます！\n\n3ヶ月後：「できた！」が増えて、自信がつく\n6ヶ月後：自分のアイデアを形にできるように\n1年後：堂々と発表できる姿に成長\n\n保護者の方からは...\n「学校の発表でも積極的に手を挙げるようになった」\n「自分で考えて行動することが増えた」\n「難しいことにも諦めずに挑戦するようになった」\n\nという嬉しい声をたくさんいただいています。\n\n毎回の授業動画で、成長の過程も見守れます！",
-                questions: [
-                    { id: 'voice', text: '他の保護者の声は？' },
-                    { id: 'trial', text: '実際に体験したい' },
-                    { id: 'apply', text: '申し込みたい！' },
-                    { id: 'initial', text: '最初に戻る' }
-                ]
-            },
-            method: {
-                user: "具体的な授業の進め方は？",
-                bot: "90分の授業はこんな流れです：\n\n1. だれでもYononaka（10分）\n   正解のないお題について意見を書く\n\n2. 今日のテーマ確認（10分）\n   何を作るか、どんな仕組みか理解\n\n3. 製作タイム（60分）\n   動画を見ながら自分のペースで製作\n   分からないところはスタッフがサポート\n\n4. 発表タイム（10分）\n   作った作品を自分の言葉で説明\n\nポイントは「教えすぎない」こと。\n子どもが自分で気づき、学ぶ瞬間を大切にしています！",
-                questions: [
-                    { id: 'material', text: '使う教材は？' },
-                    { id: 'teacher', text: 'スタッフについて' },
-                    { id: 'trial', text: '授業を体験したい' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            teacher: {
-                user: "先生はどんな人？",
-                bot: "「先生」というより「学びのパートナー」です！\n\n私たちスタッフは、答えを教える存在ではなく、一緒に考え、子どもたちの「なぜ？」「どうして？」に寄り添う存在。\n\nプログラミングの専門知識はもちろん、子どもたちの個性を大切にし、それぞれのペースに合わせたサポートができるよう研修を重ねています。\n\n「できない」と言う子には「一緒に考えよう」\n「分からない」と言う子には「どこまで分かった？」\n\nそんな声かけで、子どもたちの自律的な学びを支えています！",
-                questions: [
-                    { id: 'ratio', text: '先生と生徒の比率は？' },
-                    { id: 'training', text: 'スタッフの研修は？' },
-                    { id: 'support', text: 'サポート体制について' },
-                    { id: 'initial', text: '最初に戻る' }
-                ]
-            },
-            location: {
-                user: "教室の場所はどこですか？",
-                bot: "私たちの教室は[ここに教室の場所やアクセス情報を記述]にあります。詳細なアクセス方法はウェブサイトでもご確認いただけます。\n（この部分は実際の教室情報に置き換えてください）",
-                questions: [
-                    { id: 'online_option', text: 'オンライン対応は？' },
-                    { id: 'facility', text: '教室の設備は？' },
-                    { id: 'trial', text: '見学したい' },
-                    { id: 'initial', text: '他の質問を見る' }
-                ]
-            },
-            online_option: {
-                 user: "オンライン対応は？",
-                 bot: "はい、オンラインにも対応しています！\n\n基本的にはリアルな教室での授業が中心ですが、以下のプログラムはオンラインでも参加可能です：\n\n・Yononaka（対話型プログラム）\n・特別イベント\n・個別相談\n\nまた、遠方の方や、一時的に通えない場合のオンライン振替も検討可能です。\n\n教室の「みんなで学ぶ」雰囲気も大切にしながら、柔軟に対応させていただきます！",
-                 questions: [
-                     { id: 'location', text: '教室の場所は？' },
-                     { id: 'trial', text: '体験してみたい' },
-                     { id: 'initial', text: '他の質問を見る' }
-                 ]
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キープオンスクール - ロボットプログラミングをきっかけに学びを広げる"居場所"</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* カラー変数 */
+        :root {
+            --primary-blue: #5DADE2;
+            --secondary-orange: #F39C12;
+            --accent-yellow: #F1C40F;
+            --accent-green: #52C41A;
+            --accent-pink: #FF6B6B;
+            --dark-brown: #2C1810;
+            --light-bg: #F8F9FA;
+            --white: #FFFFFF;
+        }
+        
+        /* ヘッダー */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: top 0.3s ease-in-out, padding 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 150px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .cta-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(93, 173, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-header:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .cta-header:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .cta-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 173, 226, 0.4);
+        }
+        
+        /* ヒーローセクション */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content {
+            max-width: 700px;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            position: relative;
+        }
+        
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--dark-brown);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .cta-primary {
+            background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(243, 156, 18, 0.3);
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(243, 156, 18, 0.4);
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            opacity: 0.1;
+        }
+        
+        .shape1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary-blue);
+            top: 10%;
+            right: -150px;
+            animation-delay: 0s;
+        }
+        
+        .shape2 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent-yellow);
+            bottom: 20%;
+            left: -100px;
+            animation-delay: 5s;
+        }
+        
+        .shape3 {
+            width: 150px;
+            height: 150px;
+            background: var(--accent-green);
+            top: 50%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
             }
-            // 他の既存の会話データはそのまま
-        };
-
-        // (元のJavaScriptコードの続きは変更なし)
-        // ...
-        let isBotTyping = false;
-
-        // DOM要素
-        const chatArea = document.getElementById('chatArea');
-        const questionButtonsContainer = document.getElementById('questionButtons');
-        const characterUploadInput = document.getElementById('character-upload');
-        const characterImagePreview = document.getElementById('character-image');
-        const characterPlaceholder = document.querySelector('.character-placeholder');
-
-        let defaultBotAvatarSrc = ''; // 現在のボットアバターのURLを保持
-
-        // キャラクター画像のアップロード処理
-        characterUploadInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const imageUrl = event.target.result;
-                    characterImagePreview.src = imageUrl;
-                    characterImagePreview.style.display = 'block';
-                    characterPlaceholder.style.display = 'none';
-                    updateDefaultBotAvatar(imageUrl); // 新しい画像をデフォルトとして設定
-
-                    // 表示済みのボットアバターも更新
-                    document.querySelectorAll('.bot-avatar img.dynamic-avatar').forEach(img => {
-                        img.src = imageUrl;
-                    });
-                };
-                reader.readAsDataURL(file);
-            } else if (file) {
-                alert("画像ファイルを選択してください。");
+            33% {
+                transform: translateY(-30px) rotate(120deg);
             }
+            66% {
+                transform: translateY(30px) rotate(240deg);
+            }
+        }
+        
+        .problems {
+            padding: 80px 0;
+            background: white;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            color: var(--dark-brown);
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .problem-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .problem-item {
+            background: var(--light-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .problem-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .problem-item:before {
+            content: '✓';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: var(--accent-green);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .problem-item:hover:before {
+            opacity: 1;
+        }
+        
+        .problem-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .problem-text {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .concept {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #FFF3E0 0%, #E8F5E9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .concept-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        .concept-text h3 {
+            font-size: 2rem;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+        }
+        
+        .concept-text p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            background: linear-gradient(to bottom, transparent 50%, rgba(93, 173, 226, 0.3) 50%);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .concept-image {
+            position: relative;
+            text-align: center;
+        }
+        
+        .concept-image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-green));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(93, 173, 226, 0.3);
+        }
+        
+        .concept-image-placeholder:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+        
+        .pillars {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .pillar-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .pillar-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .pillar-header {
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pillar-header1 {
+            background: linear-gradient(135deg, var(--primary-blue), #3498DB);
+        }
+        
+        .pillar-header2 {
+            background: linear-gradient(135deg, var(--accent-yellow), var(--secondary-orange));
+        }
+        
+        .pillar-header3 {
+            background: linear-gradient(135deg, var(--accent-green), #27AE60);
+        }
+        
+        .pillar-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .pillar-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .pillar-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .pillar-content {
+            padding: 30px;
+            max-height: 0;
+            overflow-y: auto; /* コンテンツが多い場合にスクロール可能に */
+            transition: max-height 0.7s ease-in-out; /* 少しゆっくりに */
+        }
+        
+        .pillar-card.active .pillar-content {
+             max-height: 2000px; /* 修正: 十分な高さを確保 */
+        }
+        
+        .pillar-content h4 {
+            color: var(--dark-brown);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+         /* 追加: Yononaka詳細説明用スタイル */
+        .yononaka-deep-dive {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+        .yononaka-deep-dive h5 {
+            font-size: 1.15rem; /* h4より少し小さく */
+            color: var(--dark-brown);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+        .yononaka-deep-dive p {
+            color: #555; /* 少し濃いめのグレー */
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        .yononaka-deep-dive ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+            padding-left: 0;
+        }
+        .yononaka-deep-dive ul li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .yononaka-deep-dive .pillar-point { /* 既存のpillar-pointを流用 */
+             margin-top: 25px;
+        }
+
+
+        .pillar-content p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .pillar-point {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid;
+        }
+        
+        .pillar-card:nth-child(1) .pillar-point {
+            border-left-color: var(--primary-blue);
+        }
+        
+        .pillar-card:nth-child(2) .pillar-point,
+        .pillar-card:nth-child(2) .yononaka-deep-dive .pillar-point { /* Yononakaカード内のpillar-pointにも適用 */
+            border-left-color: var(--accent-yellow);
+        }
+        
+        .pillar-card:nth-child(3) .pillar-point {
+            border-left-color: var(--accent-green);
+        }
+        
+        .expand-icon {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .pillar-card.active .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .difference {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+            position: relative;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-top: 60px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .comparison-item {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-item.traditional {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-item.keepon {
+            box-shadow: 0 10px 40px rgba(93, 173, 226, 0.3);
+            transform: scale(1.05);
+            border: 3px solid var(--primary-blue);
+        }
+        
+        .comparison-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark-brown);
+        }
+        
+        .comparison-item.keepon h3 {
+            color: var(--primary-blue);
+        }
+        
+        .comparison-list {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .comparison-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .comparison-list li:before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #E74C3C;
+            font-weight: bold;
+        }
+        
+        .keepon .comparison-list li:before {
+            content: '✓';
+            color: var(--accent-green);
+        }
+        
+        .comparison-divider {
+            width: auto;
+            min-width: 80px;
+            height: 60px;
+            background: white;
+            border-radius: 10px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--dark-brown);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            border: 2px solid #eee;
+        }
+        
+        .target {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .parent-question-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            padding: 0 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .parent-icon-wrapper {
+            flex-shrink: 0;
+            padding-top: 5px; 
+        }
+
+        .parent-face-icon {
+            font-size: 2.8rem; 
+            display: inline-block;
+            line-height: 1;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            max-width: 480px; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            flex-grow: 1;
+        }
+
+        .speech-bubble p {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-weight: 600; 
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .speech-bubble::before {
+            content: "";
+            position: absolute;
+            top: 18px;
+            left: -10px; 
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid var(--primary-blue);
+        }
+        
+        .target .section-title {
+             margin-top: 1em;
+        }
+        .target .section-title:after {
+            bottom: -20px;
+        }
+
+
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .target-item {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            background: var(--light-bg);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .target-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .target-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-blue), var(--accent-green));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .target-item:hover:before {
+            transform: scaleX(1);
+        }
+        
+        .target-emoji {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+            animation-delay: calc(var(--index) * 0.1s);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .target-text {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(93, 173, 226, 0.1), rgba(82, 196, 26, 0.1));
+            border-radius: 20px;
+            font-size: 1.2rem;
+            color: var(--dark-brown);
+        }
+        
+        .claft {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #2C3E50, #3498DB);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .claft:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 30c11 0 20 9 20 20s-9 20-20 20-20-9-20-20 9-20 20-20z' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'/%3E%3C/svg%3E") repeat;
+            animation: slide 20s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(50%);
+            }
+        }
+        
+        .claft-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .claft-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 30px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+        
+        .claft-title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+        
+        .claft-description {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+        
+        .claft-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .claft-feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .claft-feature:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .claft-feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .claft-feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .final-cta {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #FFF3E0 0%, #E3F2FD 100%);
+            text-align: center;
+            position: relative;
+        }
+        
+        .final-cta-content h2 {
+            font-size: 2.5rem;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+        }
+        
+        .final-cta-content p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            padding: 20px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button.primary {
+            background: linear-gradient(135deg, var(--secondary-orange), var(--accent-yellow));
+            color: white;
+            box-shadow: 0 5px 20px rgba(243, 156, 18, 0.3);
+        }
+        
+        .cta-button.secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .access-info {
+            margin-top: 60px;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .access-info h3 {
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .access-info p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .access-info .tel {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        footer {
+            background: var(--dark-brown);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-logo {
+            width: 120px;
+            margin-bottom: 20px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        .copyright {
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .concept-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .comparison {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .comparison-divider {
+                margin: 20px auto;
+            }
+            
+            .comparison-item.keepon {
+                transform: none;
+            }
+            
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cta-primary {
+                text-align: center;
+            }
+
+            .parent-question-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .speech-bubble {
+                max-width: 90%;
+            }
+            .speech-bubble::before {
+                left: 50%;
+                transform: translateX(-50%);
+                top: -10px;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 10px solid var(--primary-blue);
+                border-top: 0;
+            }
+            .parent-icon-wrapper {
+                margin-bottom: 10px;
+                padding-top: 0;
+            }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .loader-tree {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <svg class="loader-tree" viewBox="0 0 200 200">
+                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
+                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
+                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
+                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
+                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
+                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
+            </svg>
+            <p style="color: #666;">Loading...</p>
+        </div>
+    </div>
+
+    <header id="header">
+        <div class="header-container">
+            <svg class="logo" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet">
+                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
+                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
+                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
+                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
+                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
+                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
+                <text x="100" y="220" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#2C1810">Keepon</text>
+            </svg>
+            <a href="https://www.keeponlearning.fun/contact" class="cta-header">無料体験に申し込む</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="floating-shapes">
+            <div class="shape shape1"></div>
+            <div class="shape shape2"></div>
+            <div class="shape shape3"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content fade-in">
+                <h1 class="hero-title">
+                    <span>プログラミングだけじゃない！</span>
+                </h1>
+                <p class="hero-subtitle">
+                    キープオンスクールは<br>
+                    ロボットプログラミングをきっかけに<br>
+                    学びを広げる"居場所"です
+                </p>
+                <p class="hero-description">
+                    「学校の勉強、なんだかやる気が出ない…」<br>
+                    「周りの子と比べてしまって不安…」<br>
+                    そんな悩みを抱えるお子さんや保護者の方へ。<br>
+                    キープオンスクールは、ただの習い事ではありません。<br>
+                    子どもたちが自分で考え、行動する力を育みながら、<br>
+                    安心して自分らしくいられる「居場所」です。
+                </p>
+                <div class="cta-group">
+                    <a href="https://www.keeponlearning.fun/contact" class="cta-primary">
+                        🎯 無料体験に今すぐ申し込む
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="problems">
+        <div class="container">
+            <h2 class="section-title fade-in">こんなお悩みありませんか？</h2>
+            <div class="problem-list fade-in">
+                <div class="problem-item">
+                    <div class="problem-icon">😔</div>
+                    <p class="problem-text">学校の勉強に興味が持てない、やる気が出ない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">😰</div>
+                    <p class="problem-text">周りの子と比べて焦ってしまう、自信が持てない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">🤔</div>
+                    <p class="problem-text">何か習い事をさせたいけど、子どもに合うものが見つからない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">😟</div>
+                    <p class="problem-text">学校に行きづらい、集団が苦手で居場所がない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">💭</div>
+                    <p class="problem-text">好きなことは見つけてほしいけど、押し付けたくない</p>
+                </div>
+                <div class="problem-item">
+                    <div class="problem-icon">🎯</div>
+                    <p class="problem-text">将来に役立つ力を身につけさせたいけど、何から始めれば...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="concept">
+        <div class="container">
+            <h2 class="section-title fade-in">キープオンスクールって、<br>ロボット教室...だけじゃないの？</h2>
+            <div class="concept-content fade-in">
+                <div class="concept-text">
+                    <h3>「キープオンスクールって、ロボット教室なんでしょ？」</h3>
+                    <p>よくそう聞かれますが、実はそれだけではないんです！</p>
+                    <p>もちろん、大人気のロボットプログラミングも学べます。</p>
+                    <p>でも、私たちが一番大切にしているのは、子どもたちが<span class="highlight">「自分で考えて、いろんな人と話し合い、自分から行動する力」</span>を育むこと。</p>
+                    <p>キープオンスクールは、習い事というよりも、子どもたちにとって<span class="highlight">安心できる「居場所」</span>でありたいと考えています。</p>
+                </div>
+                <div class="concept-image">
+                    <div class="concept-image-placeholder">
+                        子どもたちの活動写真
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pillars">
+        <div class="container">
+            <h2 class="section-title fade-in">キープオンスクールで体験できる<br>「３つの学びの柱」</h2>
+            <div class="pillars-grid fade-in">
+                <div class="pillar-card" onclick="togglePillar(this)">
+                    <div class="pillar-header pillar-header1">
+                        <div class="pillar-number">1</div>
+                        <div class="pillar-icon">🤖</div>
+                        <h3 class="pillar-title">ロボットプログラミング</h3>
+                        <p class="pillar-subtitle">「できた！」が自信になる！<br>問題を見つけて解決する力を育てよう</p>
+                        <div class="expand-icon">⌄</div>
+                    </div>
+                    <div class="pillar-content">
+                        <h4>どんなことをするの？</h4>
+                        <p>ブロックでロボットを組み立てて、パソコンでプログラミング！自分の作ったロボットが目の前で動くから、プログラミングの仕組みが「見て」「感じて」よくわかります。</p>
+                        <p>「どうしたらもっとうまく動くかな？」と自分で考えるうちに、問題を見つける力や、それを解決する力が自然と身につきます。</p>
+                        <div class="pillar-point">
+                            <strong>ここがポイント！</strong><br>
+                            テキスト通りに作るだけじゃなく、オリジナルのロボットを作って発表する「ロボット発表会」も！自分のアイデアを形にする楽しさを体験できます。「難しいかな？」と心配な子も大丈夫！スタッフが一人ひとりに合わせて、自分で「できた！」と気づけるようにサポートします。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pillar-card" onclick="togglePillar(this)">
+                    <div class="pillar-header pillar-header2">
+                        <div class="pillar-number">2</div>
+                        <div class="pillar-icon">💬</div>
+                        <h3 class="pillar-title">Yononaka</h3>
+                        <p class="pillar-subtitle">正解は一つじゃない！<br>いろんな意見に触れて、自分の世界を広げよう</p>
+                        <div class="expand-icon">⌄</div>
+                    </div>
+                    <div class="pillar-content">
+                        <h4>どんなことをするの？</h4>
+                        <p>「お金って何だろう？」「生きるってどういうこと？」…学校ではあまり話さないような、でもとっても大切なテーマについて、いろんな年齢や学校の仲間たちとオンラインで話し合います。</p>
+                        <div class="pillar-point">
+                            <strong>ここがポイント！</strong><br>
+                            ここには「覚えなきゃいけない正解」はありません。だから「間違ったらどうしよう…」なんて心配はいりません！いろんな人の考えを聞いて、「そんな考え方もあるんだ！」と新しい発見をしたり、自分の意見を伝える練習をしたりすることで、コミュニケーション力や、自分自身のこと、そして他の人のことをもっと深く理解できるようになります。
+                        </div>
+
+                        <!-- ========== ここから追加 ========== -->
+                        <div class="yononaka-deep-dive">
+                            <h5>🧠 なぜ「正解のない問い」に向き合うことが大切なのか？</h5>
+                            <p>学校では、「正しい答え」がある問題に取り組むことが多く、知識を覚えたり、正確に答えを当てたりする力が評価されがちです。しかし、実社会や人生には、唯一の正解がない問いのほうが圧倒的に多く存在します。</p>
+                            <p>たとえば、</p>
+                            <ul>
+                                <li>友達と意見が合わないとき、どうする？</li>
+                                <li>商品を選ぶとき、何を基準に決める？</li>
+                                <li>誰と、いつ結婚するべきだろう？</li>
+                            </ul>
+                            <p>こうした問いに、テストのような“100点の答え”はありません。だからこそ、自分の視点で考え、他者と意見を交わしながら、納得のいく答えを見つける力が必要になります。</p>
+
+                            <h5>📱 情報があふれる現代、子どもたちはどう生きる？</h5>
+                            <p>今の子どもたちは、私たちの子ども時代とはまったく違う環境にいます。生まれたときからスマートフォンやデジタル機器が身近にあり、情報は常に手のひらの中にあります。便利さと引き換えに、「正しさ」があふれすぎていて、どれを信じたらいいのか、何を選べばいいのかがわかりにくくなっています。</p>
+                            <p>こうした時代では、「これが正解」という単一の答えに頼るのではなく、自分なりの価値観や判断軸をもって考える習慣がますます重要になってきます。</p>
+
+                            <h5>🌍 変化の時代に必要な力とは？</h5>
+                            <p>現代は、技術の進化や社会の多様化によって、これまでの常識やルールがどんどん変わっていく時代です。AIと共に働く未来、気候変動と向き合う社会、複雑な人間関係……子どもたちは、答えのない問いに日常的に直面するようになります。</p>
+                            <p>たとえば、</p>
+                            <ul>
+                                <li>AIとどう共存していく？</li>
+                                <li>自分らしさって、どこにある？</li>
+                                <li>社会の中で、自分はどう役立てる？</li>
+                            </ul>
+                            <p>これらに対しては、正解もマニュアルも存在しません。けれど、自分の頭で考え、自分の言葉で語り、他者と対話を重ねることで、「自分なりの納得解」を見つけていくことができます。</p>
+
+                            <div class="pillar-point">
+                                <strong>💡 だから、Yononakaでは</strong><br>
+                                こうした力は、単なる学力ではなく、これからの社会をしなやかに生き抜くための土台となるものです。
+                                思考力、対話力、判断力、共感力……
+                                それらを育てるために、私たちは「正解がない問いに向き合う習慣」を、子どもたちの日常に取り入れたいと考えています。
+                            </div>
+                        </div>
+                        <!-- ========== 追加ここまで ========== -->
+                    </div>
+                </div>
+
+                <div class="pillar-card" onclick="togglePillar(this)">
+                    <div class="pillar-header pillar-header3">
+                        <div class="pillar-number">3</div>
+                        <div class="pillar-icon">🔍</div>
+                        <h3 class="pillar-title">PBL（課題解決型学習）</h3>
+                        <p class="pillar-subtitle">「なんでだろう？」から始まる！<br>自分で学びをデザインする力を育てよう</p>
+                        <div class="expand-icon">⌄</div>
+                    </div>
+                    <div class="pillar-content">
+                        <h4>どんなことをするの？</h4>
+                        <p>※PBLとは…Problem Based Learning の略で、「自分で課題を見つけて解決する学習」のことです。</p>
+                        <p>「鳥ってなんで飛ぶんだろう？」「私の好きなゲームはどうやって作られてるの？」…そんな身近な「なぜ？」を自分で見つけて、本やインターネットで調べて、分かったことをみんなの前で発表します。</p>
+                        <div class="pillar-point">
+                            <strong>ここがポイント！</strong><br>
+                            学校の宿題のように「これをやりなさい」と決められるのではなく、自分の「知りたい！」という気持ちが学びのスタート！自分でテーマを決めて、調べて、まとめて、発表することで、計画力や表現力、そして何よりも「自分で学ぶ楽しさ」を実感できます。これは、将来どんな道に進むにも役立つ「生きる力」そのものです。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="difference">
+        <div class="container">
+            <h2 class="section-title fade-in">「他の習い事と、どこが違うの？」<br>キープオンスクールが大切にしていること</h2>
+            <div class="comparison fade-in">
+                <div class="comparison-item traditional">
+                    <h3>一般的な塾・習い事</h3>
+                    <ul class="comparison-list">
+                        <li>決められた問題を解く</li>
+                        <li>正解を覚える</li>
+                        <li>テストの点数で評価</li>
+                        <li>みんな同じペース</li>
+                        <li>やらされる勉強</li>
+                    </ul>
+                </div>
+                <div class="comparison-divider">比較</div>
+                <div class="comparison-item keepon">
+                    <h3>キープオンスクール</h3>
+                    <ul class="comparison-list">
+                        <li>自分で課題を見つける</li>
+                        <li>考え方を身につける</li>
+                        <li>成長過程を大切に</li>
+                        <li>一人ひとりのペース</li>
+                        <li>夢中になれる学び</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container" style="margin-top: 60px;">
+                <p style="text-align: center; font-size: 1.1rem; color: #666; line-height: 1.8;">
+                    多くの塾や習い事では、あらかじめ決められた問題に「正しい答え」を出すことが求められますよね。<br>
+                    もちろん、それも大切な学びの一つです。<br><br>
+                    でも、キープオンスクールは少し違います。<br>
+                    私たちは、子どもたちが<strong>「これをやってみたい！」「これが気になる！」という<br>
+                    自分の気持ちから始まる学び</strong>を応援したいと思っています。<br><br>
+                    「やらされる勉強」ではなく、夢中になって「これ面白い！もっと知りたい！」と<br>
+                    自分でどんどん探求していく。<br>
+                    そんな<strong>「学びの楽しさ」</strong>に気づいてほしい。<br>
+                    それが、キープオンスクールの願いです。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="target">
+        <div class="container">
+            <div class="parent-question-container fade-in">
+                <div class="parent-icon-wrapper">
+                    <span class="parent-face-icon">🤔</span>
+                </div>
+                <div class="speech-bubble">
+                    <p>「うちの子には、どんなところがあってるかな？」</p>
+                </div>
+            </div>
+            <h2 class="section-title fade-in">
+                キープオンスクールは、こんなお子さんを待っています！
+            </h2>
+            <div class="target-grid fade-in">
+                <div class="target-item" style="--index: 0">
+                    <div class="target-emoji">🤖</div>
+                    <p class="target-text">ロボットやプログラミングが大好き！もっと本格的にやってみたい子</p>
+                </div>
+                <div class="target-item" style="--index: 1">
+                    <div class="target-emoji">❓</div>
+                    <p class="target-text">「なんで？」「どうして？」がいっぱいで、いろんなことを知りたがり屋さんな子</p>
+                </div>
+                <div class="target-item" style="--index: 2">
+                    <div class="target-emoji">💡</div>
+                    <p class="target-text">自分の考えやアイデアを形にして、誰かに伝えてみたい子</p>
+                </div>
+                <div class="target-item" style="--index: 3">
+                    <div class="target-emoji">🚀</div>
+                    <p class="target-text">学校の勉強とは違う、新しいことにチャレンジしてみたい子</p>
+                </div>
+                <div class="target-item" style="--index: 4">
+                    <div class="target-emoji">🏠</div>
+                    <p class="target-text">学校に行くのが少し苦手だったり、大勢の人がいる場所がちょっと得意じゃない子</p>
+                </div>
+                <div class="target-item" style="--index: 5">
+                    <div class="target-emoji">🌟</div>
+                    <p class="target-text">「自分のペースで学びたい」「好きなことを見つけたい」と思っている子</p>
+                </div>
+            </div>
+            <div class="welcome-message fade-in">
+                <p>キープオンスクールは、どんなお子さんでも大歓迎です！<br>
+                実際に、不登校を経験しているお子さんもたくさん通ってくれています。<br>
+                難しい勉強を無理やりさせるのではなく、<br>
+                一人ひとりの「好き」や「やってみたい」という気持ちを大切に、<br>
+                安心して過ごせる「居場所」でありたいと思っています。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="claft">
+        <div class="container">
+            <div class="claft-content fade-in">
+                <div class="claft-badge">2025年スタート！</div>
+                <h2 class="claft-title">CLAFT</h2>
+                <p class="claft-description">
+                    もっと多くの子どもたちに「学ぶ楽しさ」を届けたいという想いから、<br>
+                    2025年に新しいオンラインスクール／フリースクール「CLAFT」をスタートする予定です！
+                </p>
+                <div class="claft-features">
+                    <div class="claft-feature">
+                        <div class="claft-feature-icon">🌍</div>
+                        <h3 class="claft-feature-title">全国どこからでも</h3>
+                        <p>オンラインだから場所を選ばず参加できます</p>
+                    </div>
+                    <div class="claft-feature">
+                        <div class="claft-feature-icon">💖</div>
+                        <h3 class="claft-feature-title">非認知能力を育む</h3>
+                        <p>優しさ、好奇心、やり抜く力など生きる力を重視</p>
+                    </div>
+                    <div class="claft-feature">
+                        <div class="claft-feature-icon">🎯</div>
+                        <h3 class="claft-feature-title">テストで評価しない</h3>
+                        <p>一人ひとりの成長を大切にする新しい学び</p>
+                    </div>
+                </div>
+                <p style="margin-top: 40px; opacity: 0.9;">
+                    詳細は決まり次第お知らせしますので、お楽しみに！
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <div class="container">
+            <div class="final-cta-content fade-in">
+                <h2>まずは一歩、踏み出してみませんか？</h2>
+                <p>
+                    キープオンスクールは、ロボットプログラミングを学ぶだけの場所ではありません。<br>
+                    子どもたちが自分らしく輝き、未来を切り拓くための「土台」と「きっかけ」を作る場所です。
+                </p>
+                <p>
+                    「うちの子にも合うかな？」「どんな雰囲気なんだろう？」<br>
+                    少しでも興味を持っていただけたら、ぜひ一度、無料体験にお越しください。<br>
+                    スタッフ一同、皆さんとお会いできるのを楽しみにしています！
+                </p>
+                <div class="cta-buttons">
+                    <a href="https://www.keeponlearning.fun/contact" class="cta-button primary">
+                        🎯 無料体験・お問い合わせはこちら
+                    </a>
+                    <a href="https://www.keeponlearning.fun/" class="cta-button secondary">
+                        📚 詳しい情報を見る
+                    </a>
+                </div>
+                <div class="access-info">
+                    <h3>エジソンアカデミー本校</h3>
+                    <p>〒581-0066</p>
+                    <p>大阪府八尾市北亀井町3丁目2-21 アーテック5階</p>
+                    <p class="tel">TEL: 090-8652-4333</p>
+                    <p style="margin-top: 20px;">
+                        <small>開校9年、約400名の生徒さんと共に歩んできました</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <svg class="footer-logo" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid meet">
+                <circle cx="100" cy="60" r="40" fill="#F39C12" opacity="0.8"/>
+                <circle cx="60" cy="100" r="35" fill="#5DADE2" opacity="0.8"/>
+                <circle cx="140" cy="100" r="35" fill="#F1C40F" opacity="0.8"/>
+                <circle cx="100" cy="140" r="40" fill="#52C41A" opacity="0.8"/>
+                <circle cx="70" cy="150" r="15" fill="#FF6B6B" opacity="0.8"/>
+                <path d="M100 140 L100 180 L80 180 L120 180" stroke="#2C1810" stroke-width="8" fill="none"/>
+                <text x="100" y="220" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#2C1810">Keepon</text>
+            </svg>
+            <div class="footer-links">
+                <a href="https://www.keeponlearning.fun/">ホームページ</a>
+                <a href="https://www.keeponlearning.fun/contact">お問い合わせ</a>
+                <a href="https://www.keeponlearning.fun/">詳細情報</a>
+            </div>
+            <p class="copyright">© 2025 キープオンスクール All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ローディング画面の非表示
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
         });
 
-        // デフォルトのボットアバターURLを更新する関数
-        function updateDefaultBotAvatar(src = '') {
-            defaultBotAvatarSrc = src;
-        }
+        // スクロールアニメーション (Intersection Observer)
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
 
-
-        // メッセージをチャットエリアに追加する関数
-        function addMessage(type, content, callback) {
-            const messageWrapper = document.createElement('div');
-            messageWrapper.className = `message ${type}`;
-
-            const messageContentDiv = document.createElement('div');
-            messageContentDiv.className = 'message-content';
-
-            if (type === 'bot') {
-                const avatarDiv = document.createElement('div');
-                avatarDiv.className = 'bot-avatar';
-
-                if (defaultBotAvatarSrc) {
-                    const img = document.createElement('img');
-                    img.src = defaultBotAvatarSrc;
-                    img.alt = "ボットアバター";
-                    img.classList.add("dynamic-avatar");
-                    avatarDiv.appendChild(img);
-                } else {
-                    avatarDiv.textContent = '🤖';
+        const observer = new IntersectionObserver(function(entries, obs) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    obs.unobserve(entry.target);
                 }
-                messageWrapper.appendChild(avatarDiv);
-                messageWrapper.appendChild(messageContentDiv);
+            });
+        }, observerOptions);
 
-                chatArea.appendChild(messageWrapper);
-                scrollChatToBottom();
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
 
-                isBotTyping = true;
-                toggleQuestionButtons(true);
-                showTypingIndicator(messageContentDiv, () => {
-                    // 絵文字を活かすために、HTMLエンティティへの変換は行わず、\nを<br>に置換するのみ
-                    messageContentDiv.innerHTML = content.replace(/\n/g, '<br>');
-                    isBotTyping = false;
-                    // ボタンの有効化は handleQuestion 内のコールバックで実行
-                    if (callback) callback();
-                    scrollChatToBottom();
-                });
-            } else { // User message
-                messageContentDiv.innerHTML = content.replace(/\n/g, '<br>');
-                messageWrapper.appendChild(messageContentDiv);
-                chatArea.appendChild(messageWrapper);
-                scrollChatToBottom();
-                if (callback) callback();
-            }
-        }
+        // ヘッダーのスクロール表示/非表示
+        document.addEventListener('DOMContentLoaded', function() {
+            const header = document.getElementById('header');
+            if (!header) return;
 
-        // タイピングインジケーターを表示
-        function showTypingIndicator(messageContentElement, callback) {
-            messageContentElement.innerHTML = `
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            `;
-            scrollChatToBottom();
-            setTimeout(callback, 1200 + Math.random() * 800);
-        }
+            let headerHeight = header.offsetHeight;
+            let lastScrollTop = 0;
+            const scrollThreshold = headerHeight > 0 ? headerHeight : 80;
 
-        // 質問ボタンを更新
-        function updateQuestions(questions) {
-            questionButtonsContainer.innerHTML = '';
-            if (!questions || questions.length === 0) {
-                const noMoreQuestionsButton = document.createElement('button');
-                noMoreQuestionsButton.className = 'question-btn';
-                noMoreQuestionsButton.textContent = '最初の質問に戻る';
-                noMoreQuestionsButton.onclick = () => handleQuestion('initial');
-                questionButtonsContainer.appendChild(noMoreQuestionsButton);
-                return;
-            }
+            window.addEventListener('load', () => {
+                headerHeight = header.offsetHeight;
+            });
 
-            questions.forEach(q => {
-                const button = document.createElement('button');
-                button.className = 'question-btn';
-                button.textContent = q.text;
-                if (q.id) {
-                    button.onclick = () => handleQuestion(q.id);
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+                    header.style.top = `-${headerHeight}px`;
                 } else {
-                    console.warn("質問データにIDがありません:", q);
-                    button.disabled = true;
+                    header.style.top = "0";
                 }
-                button.disabled = isBotTyping;
-                questionButtonsContainer.appendChild(button);
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, { passive: true });
+        });
+
+
+        // 3つの柱のトグル機能
+        function togglePillar(card) {
+            const isActive = card.classList.contains('active');
+            document.querySelectorAll('.pillar-card').forEach(c => {
+                c.classList.remove('active');
             });
-        }
-
-        // 質問ボタンを無効化/有効化
-        function toggleQuestionButtons(disabled) {
-            questionButtonsContainer.querySelectorAll('.question-btn').forEach(btn => {
-                btn.disabled = disabled;
-            });
-        }
-
-        // 質問を処理
-        function handleQuestion(questionId) {
-            if (isBotTyping) return;
-
-            // 特別なリンク処理を先に行う
-            if (questionId === 'contact_form_link') {
-                window.open('https://docs.google.com/forms/d/e/1FAIpQLScqAKJ3CgsLb-COaE_fqsUwVGKcoiab21a3f5KrLYEzDHNzVQ/viewform', '_blank', 'noopener,noreferrer');
-            } else if (questionId === 'more_info_link') {
-                window.open('https://www.keeponlearning.fun/', '_blank', 'noopener,noreferrer');
-            }
-
-            const data = chatData[questionId];
-            if (!data) {
-                console.error(`質問IDに対応するチャットデータが見つかりません: ${questionId}`);
-                addMessage('bot', '申し訳ありません、その質問には現在お答えできません。他の質問を選んでいただけますか？', () => {
-                    updateQuestions(chatData.initial.questions);
-                    toggleQuestionButtons(false);
-                });
-                return;
-            }
-
-            toggleQuestionButtons(true);
-
-            if (data.user) {
-                addMessage('user', data.user, () => {
-                    setTimeout(() => {
-                        addMessage('bot', data.bot, () => {
-                            updateQuestions(data.questions);
-                            toggleQuestionButtons(false);
-                        });
-                    }, 400 + Math.random() * 400);
-                });
-            } else {
-                 addMessage('bot', data.bot, () => {
-                    updateQuestions(data.questions);
-                    toggleQuestionButtons(false);
-                });
+            if (!isActive) {
+                card.classList.add('active');
             }
         }
 
-        // チャットエリアを一番下にスクロール
-        function scrollChatToBottom() {
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }
-
-        // 初期化関数
-        function init() {
-            const initialData = chatData.initial;
-            if (initialData) {
-                setTimeout(() => {
-                    addMessage('bot', initialData.bot, () => {
-                        updateQuestions(initialData.questions);
-                        toggleQuestionButtons(false);
+        // スムーズスクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
                     });
-                }, 700);
-            } else {
-                console.error("初期チャットデータが見つかりません!");
-            }
-            updateDefaultBotAvatar(characterImagePreview.src && characterImagePreview.style.display === 'block' ? characterImagePreview.src : '');
+                }
+            });
+        });
+        
+
+        // ボタンのリップルエフェクト
+        document.querySelectorAll('.cta-button, .cta-primary, .cta-header').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const existingRipple = this.querySelector('.ripple');
+                if (existingRipple) {
+                    existingRipple.remove();
+                }
+
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+                
+                ripple.addEventListener('animationend', () => {
+                    ripple.remove();
+                });
+            });
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
 
-        // DOMContentLoaded後に関数を実行
-        document.addEventListener('DOMContentLoaded', init);
+        const optimizedScrollHandler = debounce(function() {
+        }, 100);
+
+        window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
+
+        function handleFirstTab(e) {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+                window.removeEventListener('keydown', handleFirstTab);
+            }
+        }
+        window.addEventListener('keydown', handleFirstTab);
+
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-nav');
+            window.addEventListener('keydown', handleFirstTab);
+        });
+
+        console.log('%cキープオンスクール', 'color: #5DADE2; font-size: 24px; font-weight: bold;');
+        console.log('%c子どもたちの「できた！」を応援します', 'color: #52C41A; font-size: 16px;');
+        console.log('お問い合わせ: https://www.keeponlearning.fun/contact');
     </script>
+
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .keyboard-nav *:focus {
+            outline: 3px solid var(--primary-blue) !important;
+            outline-offset: 2px !important;
+            box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.5) !important;
+        }
+        .keyboard-nav .no-focus-ring:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        @media print {
+            header,
+            .floating-shapes,
+            .loader,
+            .cta-group,
+            .cta-buttons,
+            .claft-badge,
+            .expand-icon,
+            .final-cta .access-info .tel
+             {
+                display: none !important;
+            }
+
+            body {
+                font-size: 12pt;
+                line-height: 1.4;
+                color: #000000;
+                background: #FFFFFF;
+            }
+            section {
+                padding: 40px 0;
+                page-break-inside: avoid;
+            }
+            .section-title {
+                font-size: 1.5rem !important;
+                page-break-after: avoid;
+            }
+            .hero {
+                min-height: auto;
+                padding-top: 20px;
+            }
+            a {
+                color: #000000;
+                text-decoration: none;
+            }
+            .highlight {
+                background: none;
+                border-bottom: 2px solid var(--primary-blue);
+                padding: 0;
+            }
+            .pillar-card, .comparison-item, .target-item, .claft-feature {
+                box-shadow: none !important;
+                border: 1px solid #ccc;
+            }
+            .parent-question-container, .speech-bubble {
+                background-color: #f0f0f0;
+                color: #000000;
+                border: 1px solid #ccc;
+            }
+            .speech-bubble::before {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                animation-delay: 0ms !important;
+            }
+
+            .fade-in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .shape {
+                animation: none;
+            }
+            .loader-tree {
+                 animation: none;
+            }
+            .target-emoji {
+                animation: none;
+            }
+        }
+    </style>
 </body>
 </html>
