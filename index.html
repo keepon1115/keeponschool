@@ -108,7 +108,8 @@ body {
         align-items: center;
         position: relative;
         overflow: hidden; /* floating-shapesがはみ出てもスクロールバーが出ないように */
-        padding-top: 100px; /* 固定ヘッダー分の高さを確保 */
+        /* ヘッダーの高さに応じて調整 (ロゴの高さ約190px + ヘッダーpadding30px + α) */
+        padding-top: 230px; /* 固定ヘッダー分の高さを確保 ★修正点1 */
     }
     
     .hero-container {
@@ -1289,6 +1290,9 @@ body {
     
     /* レスポンシブ対応 */
     @media (max-width: 768px) {
+        .hero { /* ★修正点1 (レスポンシブ時も考慮) */
+            padding-top: 200px; /* モバイル時のヘッダーの高さを考慮して調整 */
+        }
         .hero-title {
             font-size: 2rem; /* モバイル向けに調整 */
         }
@@ -1887,10 +1891,11 @@ body {
         <div class="access-info">
             <h3>お問い合わせ・アクセス</h3>
             <p><strong>キープオンスクール事務局</strong></p>
-            <p>〒XXX-XXXX 東京都渋谷区XXXXX X-X-X</p>
+            <!-- ★修正点2: 住所変更 -->
+            <p>〒581-0066<br>大阪府八尾市北亀井町3丁目2-21<br>アーテック5階</p>
             <p>開校日: 火曜日～土曜日 (詳細はお問い合わせください)</p>
             <p>メール: info@keeponlearning.fun</p>
-            <p class="tel">電話: 03-XXXX-XXXX</p>
+            <p class="tel">電話: 03-XXXX-XXXX</p> <!-- 電話番号は仮のままです -->
         </div>
     </div>
 </section>
@@ -1945,21 +1950,38 @@ body {
     // ヘッダーのスクロール制御の簡単な例
     let lastScrollTop = 0;
     const header = document.getElementById('header');
+    // JavaScriptによるヘッダー高さの動的計算とpadding-top設定は、より堅牢なサイトでは推奨されます。
+    // 今回はCSSでの固定値調整に留めますが、以下のような処理を追加することも可能です。
+    // function adjustHeroPadding() {
+    //     if(header) {
+    //         const headerHeight = header.offsetHeight;
+    //         const heroSection = document.querySelector('.hero');
+    //         if (heroSection) {
+    //             heroSection.style.paddingTop = headerHeight + 20 + 'px'; // ヘッダーの高さ + 少し余裕
+    //         }
+    //     }
+    // }
+    // window.addEventListener('load', adjustHeroPadding);
+    // window.addEventListener('resize', adjustHeroPadding);
+
+
     window.addEventListener("scroll", function() {
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollTop > lastScrollTop && scrollTop > header.offsetHeight) {
-            // Downscroll, hide header
-            header.style.top = `-${header.offsetHeight}px`;
-        } else {
-            // Upscroll or at top, show header
-            header.style.top = "0";
-        }
-        if (scrollTop > 50) {
-            header.style.padding = "10px 0";
-            header.style.boxShadow = "0 2px 10px rgba(0,0,0,0.1)";
-        } else {
-            header.style.padding = "15px 0";
-            header.style.boxShadow = "0 2px 20px rgba(0,0,0,0.1)";
+        if (header) { // header要素が存在するか確認
+            if (scrollTop > lastScrollTop && scrollTop > header.offsetHeight) {
+                // Downscroll, hide header
+                header.style.top = `-${header.offsetHeight}px`;
+            } else {
+                // Upscroll or at top, show header
+                header.style.top = "0";
+            }
+            if (scrollTop > 50) {
+                header.style.padding = "10px 0";
+                header.style.boxShadow = "0 2px 10px rgba(0,0,0,0.1)";
+            } else {
+                header.style.padding = "15px 0";
+                header.style.boxShadow = "0 2px 20px rgba(0,0,0,0.1)";
+            }
         }
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
     }, false);
