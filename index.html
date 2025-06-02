@@ -163,9 +163,6 @@ body {
         text-align: center; /* 中央揃え */
     }
     
-    /* 改良点: ヒーローセクションの「無料体験に今すぐ申し込む」ボタンは不要 */
-    /* .cta-group はHTMLから削除 */
-    
     /* アニメーション要素 (変更なし) */
     .floating-shapes {
         position: absolute;
@@ -267,8 +264,7 @@ body {
     
     .future-skills {
         display: grid;
-        /* 改良点: 「思考力」「判断力」「表現力」の3つに変更。グリッドは自動調整されるか確認 */
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 3つでもこれでOK */
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
         gap: 20px;
         margin-top: 30px;
     }
@@ -276,9 +272,6 @@ body {
     .skill-item:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); }
     .skill-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
     .skill-name { color: var(--dark-brown); font-weight: bold; font-size: 1.1rem; }
-
-    /* 改良点: 「だから、Yononakaでは」の部分を削除 */
-    /* .yononaka-connection はHTMLから該当セクションを削除 */
     
     /* 差別化セクション */
     .difference { padding: 80px 0; background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%); position: relative; }
@@ -291,21 +284,19 @@ body {
     .comparison-list { list-style: none; padding: 0; text-align: left; }
     .comparison-list li { padding: 10px 0; padding-left: 30px; position: relative; color: #666; line-height: 1.6; }
     
-    /* 改良点: 一般的なロボット教室の「×」を「✓」に */
     .comparison-item.traditional .comparison-list li:before {
-        content: '✓'; /* 変更 */
+        content: '✓'; 
         position: absolute;
         left: 0;
-        color: #999; /* グレーなどの控えめな色でキープオン側と差別化 */
+        color: #999; 
         font-weight: bold;
     }
     .keepon .comparison-list li:before { content: '✓'; position: absolute; left: 0; color: var(--accent-green); font-weight: bold; }
     
-    /* 改良点: 真ん中の「VS」も「比較」に */
     .comparison-divider { width: auto; min-width: 80px; height: 60px; background: var(--white); border-radius: 10px; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; color: var(--dark-brown); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); position: relative; z-index: 1; border: 2px solid #eee; }
     .difference .container > p { text-align: left; font-size: 1.1rem; color: #666; line-height: 1.8; max-width: 800px; margin: 60px auto 0; }
     
-    /* ターゲットセクション (文言変更はHTMLで) */
+    /* ターゲットセクション */
     .target { padding: 80px 0; background: var(--white); }
     .parent-question-container { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 30px; justify-content: center; padding: 0 20px; max-width: 700px; margin-left: auto; margin-right: auto; }
     .parent-icon-wrapper { flex-shrink: 0; padding-top: 5px; }
@@ -324,10 +315,7 @@ body {
     @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
     .target-text { font-size: 1rem; color: #666; line-height: 1.6; text-align: left; }
     .welcome-message { text-align: left; margin-top: 40px; padding: 30px; background: linear-gradient(135deg, rgba(93, 173, 226, 0.1), rgba(82, 196, 26, 0.1)); border-radius: 20px; font-size: 1.2rem; color: var(--dark-brown); max-width: 800px; margin-left: auto; margin-right: auto; }
-    
-    /* 改良点: 「教育版マインクラフト「CLAFT」」を消してください。*/
-    /* .claft, .claft-content, etc. のCSSは残存するが、HTMLがないため表示されない */
-    
+        
     /* CTAセクション */
     .final-cta { padding: 100px 0; background: linear-gradient(135deg, #FFF3E0 0%, #E3F2FD 100%); text-align: center; position: relative; }
     .final-cta-content h2 { font-size: 2.5rem; color: var(--dark-brown); margin-bottom: 20px; }
@@ -344,11 +332,10 @@ body {
     .access-info p { color: #666; line-height: 1.8; margin-bottom: 10px; }
     .access-info .tel { font-size: 1.5rem; color: var(--primary-blue); font-weight: bold; margin-top: 20px; display: block; }
 
-    /* 改良点: LINEのリンクボタン */
     .line-button {
         display: inline-block;
-        background-color: #06C755; /* LINE green */
-        color: white !important; /* importantで他のaタグスタイルを上書き */
+        background-color: #06C755; 
+        color: white !important; 
         padding: 12px 25px;
         border-radius: 8px;
         text-decoration: none;
@@ -356,10 +343,10 @@ body {
         text-align: center;
         margin-top: 20px;
         transition: background-color 0.3s ease;
-        border: none; /* ボタンらしい見た目に */
+        border: none; 
     }
     .line-button:hover {
-        background-color: #05A94A; /* Darker LINE green */
+        background-color: #05A94A; 
         color: white !important;
     }
     
@@ -375,7 +362,7 @@ body {
     /* レスポンシブ対応 */
     @media (max-width: 768px) {
         .hero {
-            padding-top: 80px; /* 改良点: モバイル時のヘッダー高さも考慮 */
+            padding-top: 80px; 
         }
         .hero-title { font-size: 2rem; }
         .hero-subtitle { font-size: 1.2rem; }
@@ -385,7 +372,6 @@ body {
         .comparison-divider { margin: 20px auto; transform: rotate(90deg); }
         .comparison-item.keepon { transform: none; }
         .pillars-grid { grid-template-columns: 1fr; }
-        /* .cta-group はヒーローから削除済み */
         .parent-question-container { flex-direction: column; align-items: center; text-align: center; }
         .speech-bubble { max-width: 90%; }
         .speech-bubble::before { left: 50%; transform: translateX(-50%); top: -10px; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid var(--primary-blue); border-top: 0; }
@@ -395,8 +381,6 @@ body {
         .story-section::before { left: 16.5px; top: 45px; }
         .story-title { font-size: 1.5rem; }
         .future-skills { grid-template-columns: 1fr; }
-        /* .yononaka-connection は削除済み */
-        /* .claft-title, .claft-description は削除済み */
         .final-cta-content p { text-align: center; }
     }
     
@@ -431,7 +415,6 @@ body {
 <!-- ヘッダー -->
 <header id="header">
     <div class="header-container">
-        <!-- 改良点: ロゴは後で画像を入れられるように -->
         <!-- TODO: ロゴ画像をここに挿入してください。推奨高さ40px程度 -->
         <!-- 例: <img src="your-logo.png" alt="キープオン ロゴ" style="max-height: 40px; width: auto;"> -->
         <div class="logo-placeholder-text" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
@@ -450,7 +433,6 @@ body {
     </div>
     <div class="hero-container">
         <div class="hero-content fade-in">
-            <!-- 改良点: 「プログラミングだけじゃない！」の部分のデザインを改良 -->
             <h1 class="hero-title">
                 <span>プログラミングだけじゃない！</span>
             </h1>
@@ -462,14 +444,11 @@ body {
             <p class="hero-description">
                 「学校の勉強、なんだかやる気が出ない…」<br>
                 「周りの人と比べてしまって不安…」<br>
-                {/* 改良点: 「お子さん」を「人」に変えてください */}
                 そんな悩みを抱える人や保護者の方へ。<br>
                 キープオンスクールは、ただの習い事ではありません。<br>
                 子どもたちが自分で考え、行動する力を育みながら、<br>
                 安心して自分らしくいられる「居場所」です。
             </p>
-            <!-- 改良点: 「無料体験に今すぐ申し込む」ボタンは不要 (ヒーローセクション内) -->
-            <!-- <div class="cta-group"> ... </div> -->
         </div>
     </div>
 </section>
@@ -485,12 +464,10 @@ body {
             </div>
             <div class="problem-item">
                 <div class="problem-icon">😰</div>
-                {/* 改良点: 「お子さん」を「人」に変えてください (文脈上「周りの子」は維持が自然) */}
                 <p class="problem-text">周りの子と比べて焦ってしまう、自信が持てない</p>
             </div>
             <div class="problem-item">
                 <div class="problem-icon">🤔</div>
-                {/* 改良点: 「お子さん」を「人」に変えてください (文脈上「子どもに」は維持が自然) */}
                 <p class="problem-text">何か習い事をさせたいけど、子どもに合うものが見つからない</p>
             </div>
             <div class="problem-item">
@@ -595,7 +572,6 @@ body {
 <!-- 「正解より納得解をつくっていく」セクション -->
 <section class="why-questions">
     <div class="container">
-        <!-- 改良点: タイトル変更 -->
         <h2 class="section-title fade-in">正解より納得解をつくっていく</h2>
         
         <div class="story-container">
@@ -620,7 +596,6 @@ body {
 
             <div class="story-section fade-in">
                 <div class="story-marker">📱</div>
-                {/* 改良点: 「お子さん」を「人」に変えてください (文脈上「子どもたち」は維持) */}
                 <h3 class="story-title">情報があふれる現代、子どもたちはどう生きる？</h3>
                 <div class="story-content">
                     <p>今の子どもたちは、私たちの子ども時代とはまったく違う環境にいます。</p>
@@ -639,7 +614,6 @@ body {
                 <div class="story-content">
                     <p>現代は、技術の進化や社会の多様化によって、これまでの常識やルールがどんどん変わっていく時代です。</p>
                     <p>AIと共に働く未来、気候変動と向き合う社会、複雑な人間関係……</p>
-                    {/* 改良点: 「お子さん」を「人」に変えてください (文脈上「子どもたち」は維持) */}
                     <p>子どもたちは、答えのない問いに日常的に直面するようになります。</p>
                     <div class="question-examples">
                         <h4>たとえば、</h4>
@@ -652,7 +626,6 @@ body {
                     <p>これらに対しては、正解もマニュアルも存在しません。</p>
                     <p>けれど、<span class="highlight">自分の頭で考え、自分の言葉で語り、他者と対話を重ねることで、「自分なりの納得解」を見つけていく</span>ことができます。</p>
                     
-                    <!-- 改良点: 「思考力」「判断力」「表現力」の3つに変更 -->
                     <div class="future-skills">
                         <div class="skill-item" style="--index: 1;">
                             <span class="skill-icon">💡</span>
@@ -663,16 +636,12 @@ body {
                             <span class="skill-name">判断力</span>
                         </div>
                         <div class="skill-item" style="--index: 3;">
-                            <span class="skill-icon">🎨</span> {/* 例: 表現力には絵筆のアイコン */}
+                            <span class="skill-icon">🎨</span> 
                             <span class="skill-name">表現力</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- 改良点: 「だから、Yononakaでは」の部分を消してください。 -->
-            <!-- 該当の .story-section と .yononaka-connection を削除 -->
-
         </div>
     </div>
 </section>
@@ -685,7 +654,6 @@ body {
             <div class="comparison-item traditional">
                 <h3>一般的な<br>ロボット教室</h3>
                 <ul class="comparison-list">
-                    {/* 改良点: 一般的なロボット教室の「×」を「✓」にしてください。(CSSで対応) */}
                     <li>主にロボット製作とプログラミング技術の習得が中心</li>
                     <li>カリキュラムに沿った一律の課題が多い</li>
                     <li>「正解」のある問題解決がメイン</li>
@@ -693,7 +661,6 @@ body {
                     <li>他の参加者との対話や協働の場は限定的</li>
                 </ul>
             </div>
-            <!-- 改良点: 真ん中の「VS」も「比較」にしてください。-->
             <div class="comparison-divider">比較</div>
             <div class="comparison-item keepon">
                 <h3>キープオン<br>スクール</h3>
@@ -718,11 +685,9 @@ body {
                 <span class="parent-face-icon">👩‍👧‍👦</span>
             </div>
             <div class="speech-bubble">
-                {/* 改良点: 「お子さん」を「人」に変えてください (文脈上「うちの子」は維持が自然) */}
                 <p>「うちの子、キープオンスクールに合うかしら…？」</p>
             </div>
         </div>
-        {/* 改良点: 「お子さん」を「人」に変えてください */}
         <h2 class="section-title fade-in">こんな人・保護者の方に<br>おすすめです</h2>
         <div class="target-grid fade-in">
             <div class="target-item" style="--index: 1;">
@@ -751,22 +716,17 @@ body {
             </div>
         </div>
         <div class="welcome-message fade-in">
-            {/* 改良点: 「お子さん」を「人」に変えてください */}
             キープオンスクールは、どんな人でも歓迎します！<br>
             一人ひとりのペースや個性を大切にしながら、学ぶ楽しさを一緒に見つけていきましょう。
         </div>
     </div>
 </section>
 
-<!-- 改良点: 「教育版マインクラフト「CLAFT」」を消してください。 -->
-<!-- CLAFTセクション全体を削除 -->
-
 <!-- CTAセクション -->
 <section class="final-cta">
     <div class="container final-cta-content fade-in">
         <h2>さあ、キープオンスクールで<br>新しい学びの一歩を踏み出そう！</h2>
         <p>
-            {/* 改良点: 「お子さん」を「人」に変えてください */}
             人の可能性を広げ、未来を切り拓く力を育む「居場所」がここにあります。<br>
             まずは無料体験で、キープオンスクールの楽しさを体感してください。
         </p>
@@ -777,17 +737,12 @@ body {
 
         <div class="access-info">
             <h3>お問い合わせ・アクセス</h3>
-            <p><strong>キープオン</strong></p> {/* 屋号のみに */}
-            {/* 改良点: 住所変更 */}
+            <p><strong>キープオン</strong></p>
             <p>〒581-0075<br>大阪府八尾市渋川町5丁目5-33</p>
-            {/* 改良点: 開校日の欄は消してください。 */}
-            {/* 改良点: メール変更 */}
             <p>メール: keeponlabo@gmail.com</p>
-            {/* 改良点: 電話番号変更 */}
             <p class="tel">電話: 090-8652-4333</p>
-            {/* 改良点: LINEのリンクボタンをつけてください */}
             <a href="https://line.me/R/ti/p/YOUR_LINE_ID_HERE" class="line-button" target="_blank" rel="noopener noreferrer">LINEでお問い合わせ</a>
-            {/* TODO: YOUR_LINE_ID_HERE を実際のLINE IDまたは追加用URLに置き換えてください */}
+            <!-- TODO: YOUR_LINE_ID_HERE を実際のLINE IDまたは追加用URLに置き換えてください -->
         </div>
     </div>
 </section>
@@ -795,18 +750,17 @@ body {
 <!-- フッター -->
 <footer>
     <div class="footer-content">
-        <!-- TODO: フッターロゴのパスを指定 (現在はダミー) -->
-        <img src="path/to/your/footer-logo.svg" alt="Keepon School Logo" class="footer-logo" style="display:none;"> <!-- ロゴがない場合は非表示 -->
-        <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px;">Keepon</div> <!-- フッターにもテキストロゴ仮置き -->
+        <!-- TODO: フッターロゴのパスを指定 -->
+        <img src="path/to/your/footer-logo.svg" alt="Keepon Logo" class="footer-logo" style="display:none;"> 
+        <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px;">Keepon</div>
         <div class="footer-links">
             <a href="#コンセプト">コンセプト</a>
             <a href="#3つの柱">3つの学び</a>
             <a href="#なぜ問い">大切にしていること</a>
-            {/* <a href="#料金">料金プラン</a> TODO: 料金プランセクションが存在すれば有効化 */}
             <a href="https://www.keeponlearning.fun/contact">お問い合わせ</a>
             <a href="https://www.keeponlearning.fun/privacy">プライバシーポリシー</a>
         </div>
-        <p class="copyright">© 2024 Keepon. All Rights Reserved.</p> <!-- 屋号のみに -->
+        <p class="copyright">© 2024 Keepon. All Rights Reserved.</p>
     </div>
 </footer>
 
@@ -847,11 +801,8 @@ body {
             } else {
                 header.style.top = "0";
             }
-            // スクロール時のヘッダーのpaddingとbox-shadowの変更は、
-            // ヘッダーが常に細い状態になったため、あまり変化が感じられないかもしれません。
-            // 必要に応じてこの部分のロジックを調整または削除してください。
-            if (scrollTop > 20) { //閾値を少し下げる
-                header.style.padding = "8px 0"; // さらに少し細く
+            if (scrollTop > 20) { 
+                header.style.padding = "8px 0"; 
                 header.style.boxShadow = "0 1px 8px rgba(0,0,0,0.1)";
             } else {
                 header.style.padding = "10px 0";
